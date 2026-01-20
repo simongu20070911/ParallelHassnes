@@ -2,6 +2,10 @@
 .DS_Store
 ._*
 
+# Root docs (keep README tracked)
+/*.md
+!/README.md
+
 # Editor/notes
 .obsidian/
 .vscode/
