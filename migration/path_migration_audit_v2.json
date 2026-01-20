@@ -1,0 +1,40 @@
+{
+  "runs_root": "/Users/simongu/ParallelHassnes/runs",
+  "old_prefix": "/Users/simongu/Desktop/ParallelHassnes",
+  "new_prefix": "/Users/simongu/ParallelHassnes",
+  "apply": false,
+  "targets": [
+    "batch_closed.json",
+    "batch_meta.json",
+    "batch_unreadable.json",
+    "current.json",
+    "harness_config.json",
+    "health.json",
+    "meta.json",
+    "overrides.json",
+    "scheduler_state.json",
+    "scoreboard.batch.json",
+    "scoreboard.system.json",
+    "state.json"
+  ],
+  "candidates_scanned": 632,
+  "hits_count": 329,
+  "hits_by_kind": {
+    "batch_meta.json": 8,
+    "current.json": 131,
+    "meta.json": 2,
+    "state.json": 178,
+    "scoreboard.batch.json": 5,
+    "batch_unreadable.json": 5
+  },
+  "skipped_count": 0,
+  "skipped": [],
+  "changed_count": 0,
+  "changed_by_kind": {},
+  "changed": [],
+  "notes": [
+    "This tool performs a literal prefix replacement inside JSON string fields only (deep traversal).",
+    "It does not rewrite binary/log files (events, stdout/stderr).",
+    "It skips state.json where status=='running' to avoid interfering with live attempts."
+  ]
+}

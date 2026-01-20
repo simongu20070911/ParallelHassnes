@@ -1,0 +1,1655 @@
+{
+  "old_prefix": "/Users/simongu/Desktop/ParallelHassnes",
+  "new_prefix": "/Users/simongu/ParallelHassnes",
+  "candidates_scanned": 632,
+  "hits": [
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260114T144309Z_6369406e/batch_meta.json",
+      "kind": "batch_meta.json",
+      "size_bytes": 2623
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260114T144309Z_6369406e/job_demo/current.json",
+      "kind": "current.json",
+      "size_bytes": 3200
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260114T144309Z_6369406e/job_demo/steps/step1/attempts/20260114T144309Z_run_20260114T144309Z_ffdb0512/meta.json",
+      "kind": "meta.json",
+      "size_bytes": 624
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260114T144309Z_6369406e/job_demo/steps/step1/attempts/20260114T144309Z_run_20260114T144309Z_ffdb0512/state.json",
+      "kind": "state.json",
+      "size_bytes": 814
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260114T144309Z_6369406e/job_demo/steps/step2/attempts/20260114T144309Z_run_20260114T144309Z_490e695d/meta.json",
+      "kind": "meta.json",
+      "size_bytes": 1041
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260114T144309Z_6369406e/job_demo/steps/step2/attempts/20260114T144309Z_run_20260114T144309Z_490e695d/state.json",
+      "kind": "state.json",
+      "size_bytes": 814
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260114T144309Z_6369406e/scoreboard.batch.json",
+      "kind": "scoreboard.batch.json",
+      "size_bytes": 2113
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T093408Z_d79335ed/job_weather_10/current.json",
+      "kind": "current.json",
+      "size_bytes": 11031
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T093408Z_d79335ed/scoreboard.batch.json",
+      "kind": "scoreboard.batch.json",
+      "size_bytes": 7137
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T093856Z_46811c27/batch_unreadable.json",
+      "kind": "batch_unreadable.json",
+      "size_bytes": 323
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T093856Z_46811c27/job_weather_10/current.json",
+      "kind": "current.json",
+      "size_bytes": 11031
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T093856Z_46811c27/scoreboard.batch.json",
+      "kind": "scoreboard.batch.json",
+      "size_bytes": 7179
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/current.json",
+      "kind": "current.json",
+      "size_bytes": 15659
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/steps/bom/attempts/20260115T094746Z_run_20260115T094746Z_92b2e409/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/steps/chi/attempts/20260115T094423Z_run_20260115T094423Z_c6f89389/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/steps/cpt/attempts/20260115T094910Z_run_20260115T094910Z_38e79a70/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/steps/la/attempts/20260115T094349Z_run_20260115T094349Z_26559fd6/state.json",
+      "kind": "state.json",
+      "size_bytes": 1115
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/steps/lon/attempts/20260115T094515Z_run_20260115T094515Z_6bdf2bb0/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/steps/nyc/attempts/20260115T094307Z_run_20260115T094307Z_15e09b47/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/steps/par/attempts/20260115T094547Z_run_20260115T094547Z_b17ee74f/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/steps/sao/attempts/20260115T094821Z_run_20260115T094821Z_73222e58/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/steps/syd/attempts/20260115T094702Z_run_20260115T094702Z_25988c1a/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T094307Z_8853155d/job_weather_10/steps/tyo/attempts/20260115T094630Z_run_20260115T094630Z_59881c37/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/batch_unreadable.json",
+      "kind": "batch_unreadable.json",
+      "size_bytes": 323
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/current.json",
+      "kind": "current.json",
+      "size_bytes": 15659
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/steps/bom/attempts/20260115T100251Z_run_20260115T100251Z_f9c9e842/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/steps/chi/attempts/20260115T100251Z_run_20260115T100251Z_2cf13ca1/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/steps/cpt/attempts/20260115T100251Z_run_20260115T100251Z_d05f3696/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/steps/la/attempts/20260115T100251Z_run_20260115T100251Z_2ff18073/state.json",
+      "kind": "state.json",
+      "size_bytes": 1115
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/steps/lon/attempts/20260115T100251Z_run_20260115T100251Z_7168e705/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/steps/nyc/attempts/20260115T100251Z_run_20260115T100251Z_2717a336/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/steps/par/attempts/20260115T100251Z_run_20260115T100251Z_28fa4203/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/steps/sao/attempts/20260115T100251Z_run_20260115T100251Z_010ac290/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/steps/syd/attempts/20260115T100251Z_run_20260115T100251Z_5247965d/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T100251Z_b1214086/job_weather_10/steps/tyo/attempts/20260115T100251Z_run_20260115T100251Z_07cdb9de/state.json",
+      "kind": "state.json",
+      "size_bytes": 1118
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/batch_unreadable.json",
+      "kind": "batch_unreadable.json",
+      "size_bytes": 323
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/current.json",
+      "kind": "current.json",
+      "size_bytes": 15544
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/steps/q16/attempts/20260115T101830Z_run_20260115T101830Z_ff5d1b3d/state.json",
+      "kind": "state.json",
+      "size_bytes": 1112
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/steps/q17/attempts/20260115T101830Z_run_20260115T101830Z_6ebaec2d/state.json",
+      "kind": "state.json",
+      "size_bytes": 1112
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/steps/q20/attempts/20260115T101831Z_run_20260115T101831Z_0c2e337c/state.json",
+      "kind": "state.json",
+      "size_bytes": 1112
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/steps/q27/attempts/20260115T101831Z_run_20260115T101831Z_e2444f4d/state.json",
+      "kind": "state.json",
+      "size_bytes": 1112
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/steps/q28/attempts/20260115T101831Z_run_20260115T101831Z_a602e9e7/state.json",
+      "kind": "state.json",
+      "size_bytes": 1112
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/steps/q29/attempts/20260115T101831Z_run_20260115T101831Z_25df7809/state.json",
+      "kind": "state.json",
+      "size_bytes": 1112
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/steps/q30/attempts/20260115T101831Z_run_20260115T101831Z_43bb0779/state.json",
+      "kind": "state.json",
+      "size_bytes": 1112
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/steps/q31/attempts/20260115T101831Z_run_20260115T101831Z_bf9ccf1c/state.json",
+      "kind": "state.json",
+      "size_bytes": 1112
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/steps/q32/attempts/20260115T101831Z_run_20260115T101831Z_2cef1b04/state.json",
+      "kind": "state.json",
+      "size_bytes": 1112
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T101830Z_19f03832/job_heads_10/steps/q33/attempts/20260115T101831Z_run_20260115T101831Z_656c2754/state.json",
+      "kind": "state.json",
+      "size_bytes": 1112
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/current.json",
+      "kind": "current.json",
+      "size_bytes": 33166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/review_au/attempts/20260115T111148Z_run_20260115T111148Z_deeef9f3/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/review_br/attempts/20260115T111131Z_run_20260115T111131Z_ee764c58/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/review_ca/attempts/20260115T111147Z_run_20260115T111147Z_fad7c937/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/review_de/attempts/20260115T111130Z_run_20260115T111130Z_d7dd66ab/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/review_fr/attempts/20260115T111139Z_run_20260115T111139Z_e07660b9/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/review_gb/attempts/20260115T111138Z_run_20260115T111138Z_02fdb8e0/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/review_in/attempts/20260115T111138Z_run_20260115T111138Z_0dca0b04/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/review_jp/attempts/20260115T111150Z_run_20260115T111150Z_e981f068/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/review_us/attempts/20260115T111145Z_run_20260115T111145Z_0ac3e2bd/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/review_za/attempts/20260115T111142Z_run_20260115T111142Z_be512784/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/write_au/attempts/20260115T111049Z_run_20260115T111049Z_72a67322/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/write_br/attempts/20260115T111049Z_run_20260115T111049Z_614f0dac/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/write_ca/attempts/20260115T111049Z_run_20260115T111049Z_9e5ecbfe/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/write_de/attempts/20260115T111049Z_run_20260115T111049Z_700cf9a1/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/write_fr/attempts/20260115T111049Z_run_20260115T111049Z_1edbda5e/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/write_gb/attempts/20260115T111049Z_run_20260115T111049Z_2e0523cb/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/write_in/attempts/20260115T111049Z_run_20260115T111049Z_483a11eb/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/write_jp/attempts/20260115T111049Z_run_20260115T111049Z_3973f686/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/write_us/attempts/20260115T111049Z_run_20260115T111049Z_442a78d8/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T111049Z_7085ae44/job_weather_two_phase_10/steps/write_za/attempts/20260115T111049Z_run_20260115T111049Z_df7b92a4/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/current.json",
+      "kind": "current.json",
+      "size_bytes": 34497
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/review_au/attempts/20260115T113713Z_run_20260115T113713Z_518dc7fb/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/review_br/attempts/20260115T113702Z_run_20260115T113702Z_8029b9ff/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/review_ca/attempts/20260115T113721Z_run_20260115T113721Z_4e9332a5/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/review_de/attempts/20260115T113656Z_run_20260115T113656Z_e5169de6/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/review_fr/attempts/20260115T113643Z_run_20260115T113643Z_2193a1f2/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/review_gb/attempts/20260115T113655Z_run_20260115T113655Z_a1cbc6fb/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/review_in/attempts/20260115T113651Z_run_20260115T113651Z_ee317617/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/review_jp/attempts/20260115T113657Z_run_20260115T113657Z_5ba9aac2/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/review_us/attempts/20260115T113644Z_run_20260115T113644Z_6da7f9d2/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/review_za/attempts/20260115T113704Z_run_20260115T113704Z_83936042/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/write_au/attempts/20260115T113626Z_run_20260115T113626Z_16c9801e/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/write_br/attempts/20260115T113626Z_run_20260115T113626Z_ba82de74/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/write_ca/attempts/20260115T113626Z_run_20260115T113626Z_a28f6c6b/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/write_de/attempts/20260115T113626Z_run_20260115T113626Z_39cb9f7e/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/write_fr/attempts/20260115T113626Z_run_20260115T113626Z_62e4cb39/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/write_gb/attempts/20260115T113626Z_run_20260115T113626Z_de1cd294/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/write_in/attempts/20260115T113626Z_run_20260115T113626Z_be4811e6/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/write_jp/attempts/20260115T113626Z_run_20260115T113626Z_5b84d505/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/write_us/attempts/20260115T113626Z_run_20260115T113626Z_97280c88/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260115T113626Z_7c8f3d4f/job_weather_two_phase_10_low_effort/steps/write_za/attempts/20260115T113626Z_run_20260115T113626Z_aa46e31c/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260116T011650Z_f62b26a8/job_api_test/current.json",
+      "kind": "current.json",
+      "size_bytes": 1677
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260116T011650Z_f62b26a8/job_api_test/steps/s1/attempts/20260116T011657Z_run_20260116T011657Z_fe052d3a/state.json",
+      "kind": "state.json",
+      "size_bytes": 1108
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260116T012800Z_3b01f38f/job_api_real_texts_3/current.json",
+      "kind": "current.json",
+      "size_bytes": 4895
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260116T012800Z_3b01f38f/job_api_real_texts_3/steps/t1/attempts/20260116T012806Z_run_20260116T012806Z_3ee18427/state.json",
+      "kind": "state.json",
+      "size_bytes": 1133
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260116T012800Z_3b01f38f/job_api_real_texts_3/steps/t2/attempts/20260116T012806Z_run_20260116T012806Z_95753492/state.json",
+      "kind": "state.json",
+      "size_bytes": 1133
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260116T012800Z_3b01f38f/job_api_real_texts_3/steps/t3/attempts/20260116T012806Z_run_20260116T012806Z_23788c7b/state.json",
+      "kind": "state.json",
+      "size_bytes": 1133
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_01_shock_defs/current.json",
+      "kind": "current.json",
+      "size_bytes": 1747
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_01_shock_defs/steps/check/attempts/20260117T101235Z_run_20260117T101235Z_6ae911bc/state.json",
+      "kind": "state.json",
+      "size_bytes": 1139
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_02_sources_minimality/current.json",
+      "kind": "current.json",
+      "size_bytes": 1803
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_02_sources_minimality/steps/check/attempts/20260117T101235Z_run_20260117T101235Z_f8085cfe/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_03_fomc_calendar_tz/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_03_fomc_calendar_tz/steps/check/attempts/20260117T101235Z_run_20260117T101235Z_ced8df23/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_04_surprise_series/current.json",
+      "kind": "current.json",
+      "size_bytes": 1782
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_04_surprise_series/steps/check/attempts/20260117T101235Z_run_20260117T101235Z_612d6a35/state.json",
+      "kind": "state.json",
+      "size_bytes": 1154
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_05_market_data_yfinance/current.json",
+      "kind": "current.json",
+      "size_bytes": 1817
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_05_market_data_yfinance/steps/check/attempts/20260117T101235Z_run_20260117T101235Z_0556475e/state.json",
+      "kind": "state.json",
+      "size_bytes": 1169
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_06_flow_proxy_units/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_06_flow_proxy_units/steps/check/attempts/20260117T101235Z_run_20260117T101235Z_4ddd4693/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_07_regime_labeling/current.json",
+      "kind": "current.json",
+      "size_bytes": 1782
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_07_regime_labeling/steps/check/attempts/20260117T101235Z_run_20260117T101235Z_b2fb944c/state.json",
+      "kind": "state.json",
+      "size_bytes": 1154
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_08_event_study_math/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_08_event_study_math/steps/check/attempts/20260117T101235Z_run_20260117T101235Z_2cee51cc/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_09_scatter_and_tables/current.json",
+      "kind": "current.json",
+      "size_bytes": 1803
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_09_scatter_and_tables/steps/check/attempts/20260117T101235Z_run_20260117T101235Z_5846314c/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_10_level_chop_figures/current.json",
+      "kind": "current.json",
+      "size_bytes": 1803
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_10_level_chop_figures/steps/check/attempts/20260117T101235Z_run_20260117T101235Z_668bbdf5/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_11_mean_reversion_metrics/current.json",
+      "kind": "current.json",
+      "size_bytes": 1831
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_11_mean_reversion_metrics/steps/check/attempts/20260117T101324Z_run_20260117T101324Z_fcef8cbd/state.json",
+      "kind": "state.json",
+      "size_bytes": 1175
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_12_bayes_model_spec/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_12_bayes_model_spec/steps/check/attempts/20260117T101328Z_run_20260117T101328Z_f2ca9ad1/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_13_bayes_identification/current.json",
+      "kind": "current.json",
+      "size_bytes": 1817
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_13_bayes_identification/steps/check/attempts/20260117T101333Z_run_20260117T101333Z_eefcd170/state.json",
+      "kind": "state.json",
+      "size_bytes": 1169
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_14_reproducibility/current.json",
+      "kind": "current.json",
+      "size_bytes": 1782
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_14_reproducibility/steps/check/attempts/20260117T101335Z_run_20260117T101335Z_ad98dbfc/state.json",
+      "kind": "state.json",
+      "size_bytes": 1154
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_15_deliverables_checklist/current.json",
+      "kind": "current.json",
+      "size_bytes": 1831
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_15_deliverables_checklist/steps/check/attempts/20260117T101336Z_run_20260117T101336Z_84702667/state.json",
+      "kind": "state.json",
+      "size_bytes": 1175
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_16_show_vs_disshow_logic/current.json",
+      "kind": "current.json",
+      "size_bytes": 1824
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_16_show_vs_disshow_logic/steps/check/attempts/20260117T101341Z_run_20260117T101341Z_73edb7c7/state.json",
+      "kind": "state.json",
+      "size_bytes": 1172
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_17_endogeneity_risks/current.json",
+      "kind": "current.json",
+      "size_bytes": 1796
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_17_endogeneity_risks/steps/check/attempts/20260117T101358Z_run_20260117T101358Z_1afaf893/state.json",
+      "kind": "state.json",
+      "size_bytes": 1160
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_18_scale_and_units/current.json",
+      "kind": "current.json",
+      "size_bytes": 1782
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_18_scale_and_units/steps/check/attempts/20260117T101408Z_run_20260117T101408Z_7f839d34/state.json",
+      "kind": "state.json",
+      "size_bytes": 1154
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_19_code_quality/current.json",
+      "kind": "current.json",
+      "size_bytes": 1761
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_19_code_quality/steps/check/attempts/20260117T101409Z_run_20260117T101409Z_d88bb668/state.json",
+      "kind": "state.json",
+      "size_bytes": 1145
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_20_future_extensions/current.json",
+      "kind": "current.json",
+      "size_bytes": 1796
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/audit_20_future_extensions/steps/check/attempts/20260117T101411Z_run_20260117T101411Z_9891fd6f/state.json",
+      "kind": "state.json",
+      "size_bytes": 1160
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/batch_meta.json",
+      "kind": "batch_meta.json",
+      "size_bytes": 34588
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T101234Z_c4016f6d/batch_unreadable.json",
+      "kind": "batch_unreadable.json",
+      "size_bytes": 323
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_01_shock_defs/current.json",
+      "kind": "current.json",
+      "size_bytes": 1747
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_01_shock_defs/steps/check/attempts/20260117T104907Z_run_20260117T104907Z_641a62f0/state.json",
+      "kind": "state.json",
+      "size_bytes": 1139
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_02_sources_minimality/current.json",
+      "kind": "current.json",
+      "size_bytes": 1803
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_02_sources_minimality/steps/check/attempts/20260117T104907Z_run_20260117T104907Z_ce911fa4/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_03_fomc_calendar_tz/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_03_fomc_calendar_tz/steps/check/attempts/20260117T104907Z_run_20260117T104907Z_31c8094f/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_04_surprise_series_units/current.json",
+      "kind": "current.json",
+      "size_bytes": 1824
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_04_surprise_series_units/steps/check/attempts/20260117T104907Z_run_20260117T104907Z_d01b7525/state.json",
+      "kind": "state.json",
+      "size_bytes": 1172
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_05_flow_proxy_decomposition/current.json",
+      "kind": "current.json",
+      "size_bytes": 1845
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_05_flow_proxy_decomposition/steps/check/attempts/20260117T104907Z_run_20260117T104907Z_c3011468/state.json",
+      "kind": "state.json",
+      "size_bytes": 1181
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_06_multi_horizon_computation/current.json",
+      "kind": "current.json",
+      "size_bytes": 1852
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_06_multi_horizon_computation/steps/check/attempts/20260117T104907Z_run_20260117T104907Z_22de058d/state.json",
+      "kind": "state.json",
+      "size_bytes": 1184
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_07_multi_horizon_bins_ci/current.json",
+      "kind": "current.json",
+      "size_bytes": 1824
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_07_multi_horizon_bins_ci/steps/check/attempts/20260117T104907Z_run_20260117T104907Z_f8abbf5d/state.json",
+      "kind": "state.json",
+      "size_bytes": 1172
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_08_local_projections_math_priors/current.json",
+      "kind": "current.json",
+      "size_bytes": 1880
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_08_local_projections_math_priors/steps/check/attempts/20260117T104907Z_run_20260117T104907Z_ef3ef72a/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_09_joint_bayes_model/current.json",
+      "kind": "current.json",
+      "size_bytes": 1796
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_09_joint_bayes_model/steps/check/attempts/20260117T104907Z_run_20260117T104907Z_f2580985/state.json",
+      "kind": "state.json",
+      "size_bytes": 1160
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_10_regime_boundary_shifts/current.json",
+      "kind": "current.json",
+      "size_bytes": 1831
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_10_regime_boundary_shifts/steps/check/attempts/20260117T104907Z_run_20260117T104907Z_2aa33234/state.json",
+      "kind": "state.json",
+      "size_bytes": 1175
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_11_level_chop_rolling/current.json",
+      "kind": "current.json",
+      "size_bytes": 1803
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_11_level_chop_rolling/steps/check/attempts/20260117T104950Z_run_20260117T104950Z_57d81ded/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_12_mean_reversion_metrics/current.json",
+      "kind": "current.json",
+      "size_bytes": 1831
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_12_mean_reversion_metrics/steps/check/attempts/20260117T104954Z_run_20260117T104954Z_7810dd8e/state.json",
+      "kind": "state.json",
+      "size_bytes": 1175
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_13_event_study_jump/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_13_event_study_jump/steps/check/attempts/20260117T105001Z_run_20260117T105001Z_985ed374/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_14_meeting_panel_table/current.json",
+      "kind": "current.json",
+      "size_bytes": 1810
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_14_meeting_panel_table/steps/check/attempts/20260117T105010Z_run_20260117T105010Z_4865dad4/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_15_units_dictionary/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_15_units_dictionary/steps/check/attempts/20260117T105011Z_run_20260117T105011Z_66418920/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_16_reproducibility_hygiene/current.json",
+      "kind": "current.json",
+      "size_bytes": 1838
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_16_reproducibility_hygiene/steps/check/attempts/20260117T105016Z_run_20260117T105016Z_ac897d05/state.json",
+      "kind": "state.json",
+      "size_bytes": 1178
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_17_figures_presence/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_17_figures_presence/steps/check/attempts/20260117T105023Z_run_20260117T105023Z_a3d8fead/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_18_tables_presence/current.json",
+      "kind": "current.json",
+      "size_bytes": 1782
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_18_tables_presence/steps/check/attempts/20260117T105032Z_run_20260117T105032Z_22548d64/state.json",
+      "kind": "state.json",
+      "size_bytes": 1154
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_19_conclusion_show_disshow/current.json",
+      "kind": "current.json",
+      "size_bytes": 1838
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_19_conclusion_show_disshow/steps/check/attempts/20260117T105036Z_run_20260117T105036Z_e3bf3e70/state.json",
+      "kind": "state.json",
+      "size_bytes": 1178
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_20_edge_cases_and_params/current.json",
+      "kind": "current.json",
+      "size_bytes": 1824
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/audit_20_edge_cases_and_params/steps/check/attempts/20260117T105036Z_run_20260117T105036Z_7044a771/state.json",
+      "kind": "state.json",
+      "size_bytes": 1172
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T104907Z_e6cc7006/batch_meta.json",
+      "kind": "batch_meta.json",
+      "size_bytes": 34856
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_01_shock_defs/current.json",
+      "kind": "current.json",
+      "size_bytes": 1747
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_01_shock_defs/steps/check/attempts/20260117T105725Z_run_20260117T105725Z_6bc4f37a/state.json",
+      "kind": "state.json",
+      "size_bytes": 1139
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_02_sources_minimality/current.json",
+      "kind": "current.json",
+      "size_bytes": 1803
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_02_sources_minimality/steps/check/attempts/20260117T105725Z_run_20260117T105725Z_a641437d/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_03_fomc_calendar_tz/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_03_fomc_calendar_tz/steps/check/attempts/20260117T105725Z_run_20260117T105725Z_3d758642/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_04_surprise_series_units/current.json",
+      "kind": "current.json",
+      "size_bytes": 1824
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_04_surprise_series_units/steps/check/attempts/20260117T105725Z_run_20260117T105725Z_6d51e5b0/state.json",
+      "kind": "state.json",
+      "size_bytes": 1172
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_05_flow_proxy_decomposition/current.json",
+      "kind": "current.json",
+      "size_bytes": 1845
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_05_flow_proxy_decomposition/steps/check/attempts/20260117T105725Z_run_20260117T105725Z_da3888fb/state.json",
+      "kind": "state.json",
+      "size_bytes": 1181
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_06_multi_horizon_computation/current.json",
+      "kind": "current.json",
+      "size_bytes": 1852
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_06_multi_horizon_computation/steps/check/attempts/20260117T105725Z_run_20260117T105725Z_10cc5f7d/state.json",
+      "kind": "state.json",
+      "size_bytes": 1184
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_07_multi_horizon_bins_ci/current.json",
+      "kind": "current.json",
+      "size_bytes": 1824
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_07_multi_horizon_bins_ci/steps/check/attempts/20260117T105725Z_run_20260117T105725Z_26926b13/state.json",
+      "kind": "state.json",
+      "size_bytes": 1172
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_08_local_projections_math_priors/current.json",
+      "kind": "current.json",
+      "size_bytes": 1880
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_08_local_projections_math_priors/steps/check/attempts/20260117T105725Z_run_20260117T105725Z_dc2e6678/state.json",
+      "kind": "state.json",
+      "size_bytes": 1196
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_09_joint_bayes_model/current.json",
+      "kind": "current.json",
+      "size_bytes": 1796
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_09_joint_bayes_model/steps/check/attempts/20260117T105725Z_run_20260117T105725Z_c3d0eee6/state.json",
+      "kind": "state.json",
+      "size_bytes": 1160
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_10_regime_boundary_shifts/current.json",
+      "kind": "current.json",
+      "size_bytes": 1831
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_10_regime_boundary_shifts/steps/check/attempts/20260117T105725Z_run_20260117T105725Z_5abe6025/state.json",
+      "kind": "state.json",
+      "size_bytes": 1175
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_11_level_chop_rolling/current.json",
+      "kind": "current.json",
+      "size_bytes": 1803
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_11_level_chop_rolling/steps/check/attempts/20260117T105821Z_run_20260117T105821Z_92c4664e/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_12_mean_reversion_metrics/current.json",
+      "kind": "current.json",
+      "size_bytes": 1831
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_12_mean_reversion_metrics/steps/check/attempts/20260117T105825Z_run_20260117T105825Z_2b8fe093/state.json",
+      "kind": "state.json",
+      "size_bytes": 1175
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_13_event_study_jump/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_13_event_study_jump/steps/check/attempts/20260117T105827Z_run_20260117T105827Z_3c660b02/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_14_meeting_panel_table/current.json",
+      "kind": "current.json",
+      "size_bytes": 1810
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_14_meeting_panel_table/steps/check/attempts/20260117T105828Z_run_20260117T105828Z_9a2cc427/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_15_units_dictionary/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_15_units_dictionary/steps/check/attempts/20260117T105828Z_run_20260117T105828Z_33db5c06/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_16_reproducibility_hygiene/current.json",
+      "kind": "current.json",
+      "size_bytes": 1838
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_16_reproducibility_hygiene/steps/check/attempts/20260117T105856Z_run_20260117T105856Z_e575873b/state.json",
+      "kind": "state.json",
+      "size_bytes": 1178
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_17_figures_presence/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_17_figures_presence/steps/check/attempts/20260117T105900Z_run_20260117T105900Z_87b64efb/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_18_tables_presence/current.json",
+      "kind": "current.json",
+      "size_bytes": 1782
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_18_tables_presence/steps/check/attempts/20260117T105911Z_run_20260117T105911Z_b62baf62/state.json",
+      "kind": "state.json",
+      "size_bytes": 1152
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_19_conclusion_show_disshow/current.json",
+      "kind": "current.json",
+      "size_bytes": 1838
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_19_conclusion_show_disshow/steps/check/attempts/20260117T105929Z_run_20260117T105929Z_dcb03218/state.json",
+      "kind": "state.json",
+      "size_bytes": 1177
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_20_edge_cases_and_params/current.json",
+      "kind": "current.json",
+      "size_bytes": 1824
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/audit_20_edge_cases_and_params/steps/check/attempts/20260117T105931Z_run_20260117T105931Z_83465259/state.json",
+      "kind": "state.json",
+      "size_bytes": 1171
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260117T105725Z_01a9ca9d/batch_meta.json",
+      "kind": "batch_meta.json",
+      "size_bytes": 35011
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_01_netliq_construction/current.json",
+      "kind": "current.json",
+      "size_bytes": 1315
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_02_liquidity_predictive_lp/current.json",
+      "kind": "current.json",
+      "size_bytes": 1335
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_03_liquidity_regime_summary/current.json",
+      "kind": "current.json",
+      "size_bytes": 1340
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_04_dashboard_report_coherence/current.json",
+      "kind": "current.json",
+      "size_bytes": 1350
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_05_plot_quality_labels/current.json",
+      "kind": "current.json",
+      "size_bytes": 1315
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_06_component_data_sources/current.json",
+      "kind": "current.json",
+      "size_bytes": 1330
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_07_real_vs_breakeven_interpretation/current.json",
+      "kind": "current.json",
+      "size_bytes": 1380
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_08_tip_proxy_usage/current.json",
+      "kind": "current.json",
+      "size_bytes": 1295
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_09_multi_horizon_module/current.json",
+      "kind": "current.json",
+      "size_bytes": 1320
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_10_positioning_proxy/current.json",
+      "kind": "current.json",
+      "size_bytes": 1305
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_11_interaction_term_localproj/current.json",
+      "kind": "current.json",
+      "size_bytes": 1350
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_12_positioning_missing_cftc/current.json",
+      "kind": "current.json",
+      "size_bytes": 1340
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_13_acm_term_premium/current.json",
+      "kind": "current.json",
+      "size_bytes": 1300
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_14_fear_check_methodology/current.json",
+      "kind": "current.json",
+      "size_bytes": 1330
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_15_phase4_interpretation/current.json",
+      "kind": "current.json",
+      "size_bytes": 1325
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_16_reproducibility/current.json",
+      "kind": "current.json",
+      "size_bytes": 1295
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_17_data_dictionary_completeness/current.json",
+      "kind": "current.json",
+      "size_bytes": 1360
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_18_notebook_state/current.json",
+      "kind": "current.json",
+      "size_bytes": 1290
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_19_bayesian_model_correctness/current.json",
+      "kind": "current.json",
+      "size_bytes": 1350
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/audit_20_event_alignment_calendar/current.json",
+      "kind": "current.json",
+      "size_bytes": 1340
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/batch_meta.json",
+      "kind": "batch_meta.json",
+      "size_bytes": 18311
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/batch_unreadable.json",
+      "kind": "batch_unreadable.json",
+      "size_bytes": 323
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T045948Z_0f96a2e2/scoreboard.batch.json",
+      "kind": "scoreboard.batch.json",
+      "size_bytes": 13301
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_01_netliq_construction/current.json",
+      "kind": "current.json",
+      "size_bytes": 1810
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_01_netliq_construction/steps/audit/attempts/20260118T050333Z_run_20260118T050333Z_073c07b7/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_02_liquidity_predictive_lp/current.json",
+      "kind": "current.json",
+      "size_bytes": 1838
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_02_liquidity_predictive_lp/steps/audit/attempts/20260118T050333Z_run_20260118T050333Z_bb328128/state.json",
+      "kind": "state.json",
+      "size_bytes": 1178
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_03_liquidity_regime_summary/current.json",
+      "kind": "current.json",
+      "size_bytes": 1845
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_03_liquidity_regime_summary/steps/audit/attempts/20260118T050333Z_run_20260118T050333Z_0716e96c/state.json",
+      "kind": "state.json",
+      "size_bytes": 1181
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_04_dashboard_report_coherence/current.json",
+      "kind": "current.json",
+      "size_bytes": 1859
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_04_dashboard_report_coherence/steps/audit/attempts/20260118T050333Z_run_20260118T050333Z_d1d35ea0/state.json",
+      "kind": "state.json",
+      "size_bytes": 1187
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_05_plot_quality_labels/current.json",
+      "kind": "current.json",
+      "size_bytes": 1810
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_05_plot_quality_labels/steps/audit/attempts/20260118T050333Z_run_20260118T050333Z_89e0b940/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_06_component_data_sources/current.json",
+      "kind": "current.json",
+      "size_bytes": 1831
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_06_component_data_sources/steps/audit/attempts/20260118T050333Z_run_20260118T050333Z_ae5fd35f/state.json",
+      "kind": "state.json",
+      "size_bytes": 1175
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_07_real_vs_breakeven_interpretation/current.json",
+      "kind": "current.json",
+      "size_bytes": 1901
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_07_real_vs_breakeven_interpretation/steps/audit/attempts/20260118T050333Z_run_20260118T050333Z_4eeb5733/state.json",
+      "kind": "state.json",
+      "size_bytes": 1205
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_08_tip_proxy_usage/current.json",
+      "kind": "current.json",
+      "size_bytes": 1782
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_08_tip_proxy_usage/steps/audit/attempts/20260118T050333Z_run_20260118T050333Z_cca774e9/state.json",
+      "kind": "state.json",
+      "size_bytes": 1154
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_09_multi_horizon_module/current.json",
+      "kind": "current.json",
+      "size_bytes": 1817
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_09_multi_horizon_module/steps/audit/attempts/20260118T050333Z_run_20260118T050333Z_1b23ad6a/state.json",
+      "kind": "state.json",
+      "size_bytes": 1169
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_10_positioning_proxy/current.json",
+      "kind": "current.json",
+      "size_bytes": 1796
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_10_positioning_proxy/steps/audit/attempts/20260118T050333Z_run_20260118T050333Z_dc644101/state.json",
+      "kind": "state.json",
+      "size_bytes": 1160
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_11_interaction_term_localproj/current.json",
+      "kind": "current.json",
+      "size_bytes": 1859
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_11_interaction_term_localproj/steps/audit/attempts/20260118T050604Z_run_20260118T050604Z_e851fd54/state.json",
+      "kind": "state.json",
+      "size_bytes": 1187
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_12_positioning_missing_cftc/current.json",
+      "kind": "current.json",
+      "size_bytes": 1845
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_12_positioning_missing_cftc/steps/audit/attempts/20260118T050808Z_run_20260118T050808Z_3eacd3ba/state.json",
+      "kind": "state.json",
+      "size_bytes": 1181
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_13_acm_term_premium/current.json",
+      "kind": "current.json",
+      "size_bytes": 1789
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_13_acm_term_premium/steps/audit/attempts/20260118T050901Z_run_20260118T050901Z_5ef284bd/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_14_fear_check_methodology/current.json",
+      "kind": "current.json",
+      "size_bytes": 1831
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_14_fear_check_methodology/steps/audit/attempts/20260118T050919Z_run_20260118T050919Z_986bce6e/state.json",
+      "kind": "state.json",
+      "size_bytes": 1175
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_15_phase4_interpretation/current.json",
+      "kind": "current.json",
+      "size_bytes": 1824
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_15_phase4_interpretation/steps/audit/attempts/20260118T050932Z_run_20260118T050932Z_20deb9cc/state.json",
+      "kind": "state.json",
+      "size_bytes": 1172
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_16_reproducibility/current.json",
+      "kind": "current.json",
+      "size_bytes": 1782
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_16_reproducibility/steps/audit/attempts/20260118T050952Z_run_20260118T050952Z_333be5e6/state.json",
+      "kind": "state.json",
+      "size_bytes": 1154
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_17_data_dictionary_completeness/current.json",
+      "kind": "current.json",
+      "size_bytes": 1873
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_17_data_dictionary_completeness/steps/audit/attempts/20260118T051016Z_run_20260118T051016Z_fc2aa61d/state.json",
+      "kind": "state.json",
+      "size_bytes": 1193
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_18_notebook_state/current.json",
+      "kind": "current.json",
+      "size_bytes": 1775
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_18_notebook_state/steps/audit/attempts/20260118T051111Z_run_20260118T051111Z_ff5cff69/state.json",
+      "kind": "state.json",
+      "size_bytes": 1151
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_19_bayesian_model_correctness/current.json",
+      "kind": "current.json",
+      "size_bytes": 1859
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_19_bayesian_model_correctness/steps/audit/attempts/20260118T051138Z_run_20260118T051138Z_5ab55720/state.json",
+      "kind": "state.json",
+      "size_bytes": 1187
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_20_event_alignment_calendar/current.json",
+      "kind": "current.json",
+      "size_bytes": 1845
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/audit_20_event_alignment_calendar/steps/audit/attempts/20260118T051151Z_run_20260118T051151Z_624cb988/state.json",
+      "kind": "state.json",
+      "size_bytes": 1181
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T050333Z_4a35d5a8/batch_meta.json",
+      "kind": "batch_meta.json",
+      "size_bytes": 18531
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_01_cftc_loader_patterns/current.json",
+      "kind": "current.json",
+      "size_bytes": 1817
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_01_cftc_loader_patterns/steps/audit/attempts/20260118T062930Z_run_20260118T062930Z_c4f60461/state.json",
+      "kind": "state.json",
+      "size_bytes": 1169
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_02_cftc_lookahead_alignment/current.json",
+      "kind": "current.json",
+      "size_bytes": 1845
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_02_cftc_lookahead_alignment/steps/audit/attempts/20260118T062930Z_run_20260118T062930Z_48dd1ee3/state.json",
+      "kind": "state.json",
+      "size_bytes": 1181
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_03_localproj_pos_mapping/current.json",
+      "kind": "current.json",
+      "size_bytes": 1824
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_03_localproj_pos_mapping/steps/audit/attempts/20260118T062930Z_run_20260118T062930Z_db75dc61/state.json",
+      "kind": "state.json",
+      "size_bytes": 1172
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_04_daily_model_pos_mapping/current.json",
+      "kind": "current.json",
+      "size_bytes": 1838
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_04_daily_model_pos_mapping/steps/audit/attempts/20260118T062930Z_run_20260118T062930Z_3f52095f/state.json",
+      "kind": "state.json",
+      "size_bytes": 1178
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_05_dashboard_crowdedness_row/current.json",
+      "kind": "current.json",
+      "size_bytes": 1852
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_05_dashboard_crowdedness_row/steps/audit/attempts/20260118T062930Z_run_20260118T062930Z_5a2bfee7/state.json",
+      "kind": "state.json",
+      "size_bytes": 1184
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_06_metadata_provenance_cftc/current.json",
+      "kind": "current.json",
+      "size_bytes": 1845
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_06_metadata_provenance_cftc/steps/audit/attempts/20260118T062930Z_run_20260118T062930Z_7d2cb585/state.json",
+      "kind": "state.json",
+      "size_bytes": 1181
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_07_data_dictionary_phase3/current.json",
+      "kind": "current.json",
+      "size_bytes": 1989
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_07_data_dictionary_phase3/steps/audit/attempts/20260118T062930Z_run_20260118T062930Z_4fe5b301/state.json",
+      "kind": "state.json",
+      "size_bytes": 962
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_07_data_dictionary_phase3/steps/audit/attempts/20260118T064548Z_run_20260118T064548Z_6e5c914f/state.json",
+      "kind": "state.json",
+      "size_bytes": 962
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_08_readme_flags_repro/current.json",
+      "kind": "current.json",
+      "size_bytes": 1803
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_08_readme_flags_repro/steps/audit/attempts/20260118T062930Z_run_20260118T062930Z_80630949/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_09_phase1_netliq_regressor/current.json",
+      "kind": "current.json",
+      "size_bytes": 1838
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_09_phase1_netliq_regressor/steps/audit/attempts/20260118T062930Z_run_20260118T062930Z_770df930/state.json",
+      "kind": "state.json",
+      "size_bytes": 1178
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_10_phase2_real_vs_breakeven/current.json",
+      "kind": "current.json",
+      "size_bytes": 1845
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_10_phase2_real_vs_breakeven/steps/audit/attempts/20260118T062930Z_run_20260118T062930Z_40511fb3/state.json",
+      "kind": "state.json",
+      "size_bytes": 1181
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_11_phase4_acm_source/current.json",
+      "kind": "current.json",
+      "size_bytes": 1796
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_11_phase4_acm_source/steps/audit/attempts/20260118T063123Z_run_20260118T063123Z_34398f98/state.json",
+      "kind": "state.json",
+      "size_bytes": 1160
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_12_phase4_fear_check/current.json",
+      "kind": "current.json",
+      "size_bytes": 1796
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_12_phase4_fear_check/steps/audit/attempts/20260118T063139Z_run_20260118T063139Z_dac8dad6/state.json",
+      "kind": "state.json",
+      "size_bytes": 1160
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_13_multi_horizon_months/current.json",
+      "kind": "current.json",
+      "size_bytes": 1817
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_13_multi_horizon_months/steps/audit/attempts/20260118T063147Z_run_20260118T063147Z_7b54d13e/state.json",
+      "kind": "state.json",
+      "size_bytes": 1169
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_14_event_alignment_calendar/current.json",
+      "kind": "current.json",
+      "size_bytes": 1845
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_14_event_alignment_calendar/steps/audit/attempts/20260118T063221Z_run_20260118T063221Z_9baf08b5/state.json",
+      "kind": "state.json",
+      "size_bytes": 1181
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_15_liquidity_ffill_guards/current.json",
+      "kind": "current.json",
+      "size_bytes": 1831
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_15_liquidity_ffill_guards/steps/audit/attempts/20260118T063315Z_run_20260118T063315Z_13631888/state.json",
+      "kind": "state.json",
+      "size_bytes": 1175
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_16_netliq_vs_soma_comp/current.json",
+      "kind": "current.json",
+      "size_bytes": 1810
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_16_netliq_vs_soma_comp/steps/audit/attempts/20260118T063330Z_run_20260118T063330Z_b2a22bac/state.json",
+      "kind": "state.json",
+      "size_bytes": 1166
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_17_signal_dashboard_trade_mapping/current.json",
+      "kind": "current.json",
+      "size_bytes": 1887
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_17_signal_dashboard_trade_mapping/steps/audit/attempts/20260118T063406Z_run_20260118T063406Z_43ba462e/state.json",
+      "kind": "state.json",
+      "size_bytes": 1199
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_18_report_consistency/current.json",
+      "kind": "current.json",
+      "size_bytes": 1803
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_18_report_consistency/steps/audit/attempts/20260118T063529Z_run_20260118T063529Z_3fb25fc2/state.json",
+      "kind": "state.json",
+      "size_bytes": 1163
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_19_repro_no_web_assumptions/current.json",
+      "kind": "current.json",
+      "size_bytes": 1845
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_19_repro_no_web_assumptions/steps/audit/attempts/20260118T063627Z_run_20260118T063627Z_3ba28320/state.json",
+      "kind": "state.json",
+      "size_bytes": 1181
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_20_dead_refs_cleanup/current.json",
+      "kind": "current.json",
+      "size_bytes": 1796
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/audit_20_dead_refs_cleanup/steps/audit/attempts/20260118T063650Z_run_20260118T063650Z_b5a09162/state.json",
+      "kind": "state.json",
+      "size_bytes": 1160
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/batch_meta.json",
+      "kind": "batch_meta.json",
+      "size_bytes": 18330
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_20260118T062930Z_a43604fd/scoreboard.batch.json",
+      "kind": "scoreboard.batch.json",
+      "size_bytes": 2443
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_web_search_smoke_20260119/batch_meta.json",
+      "kind": "batch_meta.json",
+      "size_bytes": 3463
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_web_search_smoke_20260119/smoke_web_search_run_report/current.json",
+      "kind": "current.json",
+      "size_bytes": 1992
+    },
+    {
+      "path": "/Users/simongu/ParallelHassnes/runs/batch_web_search_smoke_20260119/smoke_web_search_run_report/steps/run/attempts/20260119T021347Z_run_20260119T021347Z_d4b2253e/state.json",
+      "kind": "state.json",
+      "size_bytes": 1157
+    }
+  ],
+  "hits_count": 329,
+  "skipped": [],
+  "skipped_count": 0
+}

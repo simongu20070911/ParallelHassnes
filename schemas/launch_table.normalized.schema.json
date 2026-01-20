@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ParallelHassnes Normalized Launch Table (Batch Meta)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "batch_id", "submitted_at", "launch_table_sha256", "batch_goal_summary", "jobs"],
+  "properties": {
+    "spec_version": { "type": "string", "description": "Launch Table spec version (major compatibility).", "pattern": "^1\\.[0-9]+\\.[0-9]+$" },
+    "batch_id": { "type": "string" },
+    "submitted_at": { "type": "string" },
+    "launch_table_sha256": { "type": "string" },
+    "batch_goal_summary": { "type": "string" },
+    "working_root": { "type": "string" },
+    "harness_config_version": { "type": "string" },
+    "concurrency": { "type": "integer", "minimum": 1 },
+    "packs": { "type": "object", "additionalProperties": true },
+    "default_pack_id": { "type": "string" },
+    "effective_defaults": { "type": "object", "additionalProperties": true },
+    "jobs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["job_id", "working_directory", "steps"],
+        "properties": {
+          "job_id": { "type": "string" },
+          "working_directory": { "type": "string" },
+          "pack_id": { "type": "string" },
+          "steps": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": ["step_id"],
+              "properties": {
+                "step_id": { "type": "string" },
+                "prompt": { "type": "string" },
+                "prompt_ref": { "type": "string" },
+                "append_prompt": { "type": "string" },
+                "depends_on": { "type": "array", "items": { "type": "string" } },
+                "resume_from": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["step_id"],
+                  "properties": {
+                    "step_id": { "type": "string" },
+                    "selector": { "type": "string" },
+                    "run_id": { "type": "string" }
+                  }
+                },
+                "retry_policy": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "max_attempts": { "type": "integer", "minimum": 1 },
+                    "retry_on_statuses": { "type": "array", "items": { "type": "string" } }
+                  }
+                },
+                "output_schema_ref": { "type": "string" },
+                "timeout_seconds": { "type": "integer", "minimum": 1 }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

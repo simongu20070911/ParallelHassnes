@@ -1,0 +1,234 @@
+{
+  "working_root": "/Users/simongu/Desktop/ParallelHassnes",
+  "concurrency": 10,
+  "execution_policy": {
+    "approval_policy": "never",
+    "sandbox": "read-only",
+    "skip_git_repo_check": true,
+    "web_search_enabled": false,
+    "model_reasoning_effort": "high"
+  },
+  "batch_goal_summary": "Run a 20-agent, read-only audit of the project /Users/simongu/fomc_surprise_flow_study against the new required goal in goalnew.md (Phase 1–4: Net Liquidity = SOMA−TGA−RRP, 20d Δ shock; outcome decomposition into nominal vs real vs breakevens; crowdedness/positioning interaction; term premium vs risk-neutral/fear check). Each agent should focus on a narrow scope (2–3 checks) to avoid attention dilution, and surface mismatches, bugs, unit errors, alignment/calendar issues, statistical/modeling errors, or misleading report/dashboard interpretations. The objective is to maximize expected value of catching correctness issues and improving future usability (Mandate 1), while staying inside strict constraints: do not modify repository files, do not regenerate outputs in-place, and provide concrete evidence by referencing artifact paths and/or minimal commands. Each agent must output valid JSON only conforming to the ParallelHassnes Run Report schema, with a short but information-dense summary that includes 1–3 grep-friendly prompt feedback lines (PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA). The orchestrator will consolidate findings and apply fixes.",
+  "jobs": [
+    {
+      "job_id": "audit_01_netliq_construction",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify files or regenerate outputs in-place.\n\nGOAL: Audit against goalnew.md (Liquidity & Component Decomposition).\nSCOPE: Phase 1 data construction: Net Liquidity = SOMA−TGA−RRP; Δ20(NetLiq); unit conversions; ffill/alignment.\nINPUT ARTIFACTS: goalnew.md; run_analysis.py; outputs/tables/net_liquidity_daily.csv; outputs/figures/timeseries_net_liquidity.png.\nDONE: Confirm correctness or flag issues with evidence (paths + what you observed). Mention unit pitfalls and any alignment/trading-calendar issues.\n\nOUTPUT: valid JSON only, schema_version=1.0.0; status ok|needs_attention|failed; summary; files_read; files_written=[]; artifacts=[]. In summary include 1–3 grep-friendly lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA. No pasted logs."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_02_liquidity_predictive_lp",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Validate Phase 1 predictive liquidity module (level + forward vol) vs goalnew.md.\nSCOPE: forward outcome definitions, forward_rolling_std correctness, regression spec/priors, and whether tables/figures match spec.\nINPUT: run_analysis.py; outputs/tables/liquidity_predictive_local_projection_posterior.csv; outputs/liquidity_predictive_spec.md; outputs/figures/predictive_netliq_*.png; outputs/figures/predictive_netliq_vs_soma_h20.png.\nDONE: Identify any bugs or mis-specifications (e.g., lookahead errors, wrong window, unit mistakes). Provide evidence.\n\nOUTPUT: Run Report JSON only (schema_version=1.0.0). Include PROMPT_* feedback lines in summary."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_03_liquidity_regime_summary",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Validate Phase 1 liquidity regimes (Inject/Drain/Flat) and regime summary outputs.\nSCOPE: regime labeling thresholds, alignment to trading_index, ACF/half-life calculations by liquidity regime, and output artifacts.\nINPUT: run_analysis.py; outputs/tables/liquidity_regime_summary_level_vol_mr.csv; outputs/tables/mean_reversion_acf_by_liquidity_regime.csv; outputs/figures/acf_*_liquidity_regime.png.\nDONE: Confirm computations are consistent; flag mask/NaN issues, wrong regime assignment, or misleading labels.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_04_dashboard_report_coherence",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Check that outputs/report.md and outputs/signal_dashboard.md are internally consistent with the underlying tables and do not overclaim.\nSCOPE: Verify a few dashboard rows by tracing to the referenced CSVs; check sign/CI logic; identify contradictions.\nINPUT: outputs/report.md; outputs/signal_dashboard.md; outputs/signal_dashboard.csv; outputs/tables/local_projection_posterior.csv; outputs/tables/liquidity_predictive_local_projection_posterior.csv; outputs/tables/fear_check_term_premium_vs_rn.csv.\nDONE: Provide concrete examples of any mismatch (quote the numbers from files, no long paste) and suggest how to fix phrasing or logic.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_05_plot_quality_labels",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Audit key figures for labeling correctness and interpretability.\nSCOPE: timeseries_net_liquidity.png; impulse_response_localproj_* (surprise/liquidity/interaction); fear_check_term_premium_vs_rn.png. Check axes/units, legends, and whether figure titles match what is plotted.\nINPUT: outputs/figures/* (see scope).\nDONE: Identify mislabeled units, missing legends, or misleading titles; propose minimal fixes.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_06_component_data_sources",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Validate Phase 2 outcome decomposition data sources and transforms.\nSCOPE: DGS10, DFII10, T10YIE, BE10_calc, TP10 (ACM), RN10 construction; alignment; unit conversions.\nINPUT: run_analysis.py; outputs/tables/event_multi_horizon_long.csv; outputs/tables/local_projection_posterior.csv; outputs/tables/mean_reversion_acf_by_regime.csv.\nDONE: Confirm these are computed as intended; flag any obvious data/transform mistakes.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_07_real_vs_breakeven_interpretation",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Check Phase 2 results logic: real vs breakeven responses and persistence.\nSCOPE: Verify report/dashboard statements about DFII10 vs T10YIE using local_projection_posterior.csv and multi_horizon tables.\nINPUT: outputs/report.md; outputs/signal_dashboard.md; outputs/tables/local_projection_posterior.csv; outputs/tables/multi_horizon_bin_averages.csv; outputs/figures/impulse_response_localproj_10y_components.png.\nDONE: Confirm the reported numbers match tables and that any 'fade vs trend' implications are warranted.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_08_tip_proxy_usage",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Validate TIP ETF integration as a real-rate proxy (Phase 2).\nSCOPE: yfinance download settings, return computation, alignment, and whether TIP is used consistently in figures/tables.\nINPUT: run_analysis.py; outputs/tables/event_multi_horizon_long.csv; outputs/figures/multi_horizon_cum_by_surprise_etfs.png; outputs/figures/impulse_response_localproj_etfs.png.\nDONE: Flag any issues with TIP adjustments or interpretation.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_09_multi_horizon_module",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Validate the multi-horizon post-FOMC module (H={1,5,20,60,120}).\nSCOPE: outcome definitions, event alignment, binning (high/low abs surprise), bootstrap CI implementation.\nINPUT: run_analysis.py; outputs/tables/event_multi_horizon_long.csv; outputs/tables/multi_horizon_bin_averages.csv; outputs/figures/multi_horizon_cum_by_surprise_*.png.\nDONE: Confirm calculations or highlight methodological/implementation issues.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_10_positioning_proxy",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Validate Phase 3 positioning proxy.\nSCOPE: cta_proxy_position_from_price implementation, lookback choice, standardization, missing data handling, and whether proxy sign is interpretable.\nINPUT: run_analysis.py; outputs/tables/event_multi_horizon_long.csv (cta_pos_std); outputs/tables/local_projection_posterior.csv.\nDONE: Identify any bugs or interpretability issues; propose improvements.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_11_interaction_term_localproj",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Validate Phase 3 Surprise×Positioning interaction in event-horizon local projections.\nSCOPE: regression design matrix, standardization choices, interpretation of δ (interaction), and whether figures match columns.\nINPUT: run_analysis.py; outputs/tables/local_projection_posterior.csv; outputs/local_projection_spec.md; outputs/figures/impulse_response_localproj_interaction_*.png.\nDONE: Identify scaling or interpretation mistakes and suggest fixes.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_12_positioning_missing_cftc",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Assess Phase 3 completeness: whether CTA proxy is sufficient or CFTC/COT positioning should be added.\nSCOPE: Identify minimal integration plan and the most important missing input choices (instrument, normalization).\nINPUT: goalnew.md; outputs/report.md; run_analysis.py.\nDONE: Provide a concrete recommendation (what to add, where, and pitfalls). Keep it scoped.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_13_acm_term_premium",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Validate Phase 4 ACM term premium + risk-neutral yield construction.\nSCOPE: THRE E FYTP10 usage, units, RN10 = DGS10 - TP10; whether signs make sense.\nINPUT: run_analysis.py; outputs/tables/event_multi_horizon_long.csv; outputs/figures/impulse_response_localproj_acm_10y.png.\nDONE: Flag issues or confirm. Mention any data limitations.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_14_fear_check_methodology",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Validate the 'fear check' methodology vs the Phase 4 hypothesis.\nSCOPE: Does the regression in outputs/tables/fear_check_term_premium_vs_rn.csv actually test mean reversion of TP vs RN shocks? Are there alternative specifications that match the hypothesis better?\nINPUT: run_analysis.py; outputs/tables/fear_check_term_premium_vs_rn.csv; outputs/figures/fear_check_term_premium_vs_rn.png; outputs/report.md.\nDONE: Identify if the implemented test is aligned or mis-specified, and propose minimal improvements.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_15_phase4_interpretation",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Check Phase 4 interpretation in report/dashboard.\nSCOPE: Trace fear_check outputs and local projection TP10/RN10 surprise responses; ensure the narrative does not contradict results.\nINPUT: outputs/report.md; outputs/signal_dashboard.md; outputs/tables/fear_check_term_premium_vs_rn.csv; outputs/tables/local_projection_posterior.csv.\nDONE: Provide concrete corrections if needed.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_16_reproducibility",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Reproducibility audit.\nSCOPE: requirements.txt correctness, venv instructions, caching/metadata.json, deterministic outputs, and whether any hidden deps exist.\nINPUT: requirements.txt; run_analysis.py; data/raw/metadata.json; outputs/report.md.\nDONE: Identify reproducibility risks and suggest minimal fixes.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_17_data_dictionary_completeness",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Data dictionary completeness/correctness audit.\nSCOPE: outputs/data_dictionary.md and outputs/data_dictionary.csv vs the actually used series and produced artifacts. Ensure units/transforms are stated correctly.\nINPUT: outputs/data_dictionary.md; outputs/data_dictionary.csv; run_analysis.py.\nDONE: Flag missing series/outputs or incorrect transform descriptions.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_18_notebook_state",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Notebook audit.\nSCOPE: notebooks/fomc_surprise_flow_study.ipynb: does it still match the current script outputs and goalnew framing? Identify if it needs updates.\nINPUT: notebooks/fomc_surprise_flow_study.ipynb; outputs/report.md.\nDONE: Provide a concise checklist of needed notebook updates (if any).\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_19_bayesian_model_correctness",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Bayesian modeling correctness audit.\nSCOPE: NIG regression implementation, coefficient scaling back to bps, priors, sampling adequacy, and any obvious statistical bugs.\nINPUT: run_analysis.py; outputs/local_projection_spec.md; outputs/liquidity_predictive_spec.md; outputs/tables/local_projection_posterior.csv; outputs/tables/liquidity_predictive_local_projection_posterior.csv.\nDONE: Identify correctness issues or confirm. Suggest minimal improvements.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_20_event_alignment_calendar",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor. Read-only.\n\nGOAL: Event alignment and calendar audit.\nSCOPE: build_fomc_event_table alignment, after-close adjustment, mapping to trading calendar, and potential lookahead.\nINPUT: run_analysis.py; outputs/tables/fomc_events_aligned.csv.\nDONE: Identify issues and propose minimal fixes.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines."
+        }
+      ]
+    }
+  ]
+}

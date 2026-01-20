@@ -1,0 +1,74 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+  "batch_goal_summary": "This batch performs a research/backtest-mode reality and correctness audit of the Rust codebase under /Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest. The goal is to identify high-impact issues in the simulation logic that can invalidate research conclusions: look-ahead bias, timestamp/ordering mistakes, unrealistic fill assumptions, incorrect queue/latency/fee modeling, state-machine bugs in order tracking, and unsafe or undefined behavior that could silently corrupt results. Scope is intentionally limited to backtesting and research logic (hftbacktest crate backtest modules, depth models, data readers, and backtest models). Explicitly exclude: live trading mode, exchange connectors, collector, python bindings, and all examples; do not spend time on build failures in examples. Each agent must inspect code, reason about realism vs real matching engines and market data constraints, and produce concrete findings with file+symbol references and suggested mitigations/tests. Constraints: shared workspace only (no isolated worktrees/branches), do not modify source files, and do not commit. If commands are run (e.g., cargo test), write artifacts only to temporary/target directories and do not change tracked files.",
+  "concurrency": 5,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "workspace-write",
+    "skip_git_repo_check": false,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 5400 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "agent_01_event_ordering_and_lookahead",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "Agent 1/5 (Backtest event ordering + look-ahead bias audit)\n\nScope: RESEARCH/BACKTEST MODE ONLY.\nDo NOT inspect: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal: Determine whether the backtest event loop can introduce look-ahead bias or incorrect ordering when mixing:\n- market data events vs order-request/response events,\n- multiple assets,\n- local vs exchange processors,\n- equal timestamps.\n\nTasks:\n1) Inspect the backtest driver/event selection logic and explain the exact ordering rules for ties.\n2) Identify any place where a fill/decision could depend on information that would not be available at that moment in real life (e.g., using a post-update book to fill an order that should have been evaluated on the pre-update book).\n3) Check whether timestamps are treated consistently (units, monotonicity, tie-breaking) and whether any path uses \"current time\" in a way that can bias results.\n4) Propose concrete mitigation strategies (explicit tie-breaker policy, stable ordering, tests that catch look-ahead, validation hooks).\n\nOptional (only if useful): run `cargo test -p hftbacktest --lib` using `CARGO_TARGET_DIR=.ph_target/agent_01`.\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_02_fill_and_queue_realism",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "Agent 2/5 (Fill model + queue realism audit)\n\nScope: RESEARCH/BACKTEST MODE ONLY.\nDo NOT inspect: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal: Audit whether the fill/queue model is realistic enough for HFT research and where it can systematically overestimate edge.\n\nTasks:\n1) Inspect queue model(s) and exchange/local processor behavior for limit orders, partial fills, cancellations, modify/replace, and crossing events.\n2) Identify assumptions that are materially optimistic (e.g., fills when touching, ignoring queue position, unrealistic immediate cancels, inability to model hidden liquidity, ignoring spread dynamics).\n3) Check for invariants and edge cases that can break tracking (e.g., depth level disappears but orders remain; negative qty; crossed book states; event-driven state machine errors).\n4) Suggest how to parameterize realism knobs (adverse selection penalty, queue priority model, latency jitter, probabilistic fills) and what minimal tests can validate it.\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_03_latency_fee_pnl_accounting",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "Agent 3/5 (Latency + fees + PnL accounting realism)\n\nScope: RESEARCH/BACKTEST MODE ONLY.\nDo NOT inspect: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal: Verify that latency modeling, fee modeling, and PnL/state accounting are internally consistent and not subtly optimistic.\n\nTasks:\n1) Inspect latency models and how they interact with order placement/response timestamps and event loop scheduling.\n2) Inspect fee models and how fees are applied (maker/taker, per-trade vs per-qty/value, rounding).\n3) Inspect PnL, position, and state value updates for corner cases: partial fills, multiple fills, cancels/replace, end-of-day/EndOfData handling.\n4) Identify any mismatch between what timestamps represent (exchange ts vs local ts) and what the model assumes.\n5) Suggest tests that would catch accounting drift (e.g., invariants: cash + inventory*mid + fees = equity; monotonicity; no money creation).\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_04_depth_models_invariants",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "Agent 4/5 (Market depth models: invariants + realism)\n\nScope: RESEARCH/BACKTEST MODE ONLY.\nDo NOT inspect: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal: Check whether market depth models used in backtests maintain invariants and behave realistically under updates.\n\nTasks:\n1) Inspect depth implementations (L2/L3) used in backtest paths and enumerate invariants they assume (bid<=ask, non-negative qty, tick/lot rounding, snapshot semantics).\n2) Identify any logic that can make backtests unrealistic (e.g., stale best bid/ask, incorrect clearing behavior, crossed-book handling, order aggregation mismatches).\n3) Focus on the parts that would bias strategies: microprice/mid, spread state, best-bid/ask stability, and trade/quote event handling.\n4) Suggest minimal regression tests to lock invariants for each depth type.\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_05_data_ingest_and_timestamp_semantics",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "Agent 5/5 (Data ingest + timestamp semantics + robustness)\n\nScope: RESEARCH/BACKTEST MODE ONLY.\nDo NOT inspect: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal: Ensure the data ingestion pipeline (especially npy/npz reader + Data/DataPtr) is safe, robust, and does not silently distort data.\n\nTasks:\n1) Audit `.npy`/`.npz` reader behavior for malformed/truncated files, alignment assumptions, shape validation, and dtype/field validation.\n2) Identify any way data can be misinterpreted without a hard error (silent corruption) or can panic in the middle of a long backtest.\n3) Check timestamp fields: what is considered exch_ts vs local_ts; verify unit assumptions; look for integer overflow, underflow, or wrap.\n4) Recommend strict validation rules that prevent silent corruption and are compatible with real pipelines.\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    }
+  ]
+}

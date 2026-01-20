@@ -1,0 +1,129 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+  "batch_goal_summary": "This batch exists to perform a diverse, Rust-first bug hunt over the hftbacktest workspace under /Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest. The objective is not to implement fixes in-place; it is to quickly surface the highest-impact correctness, safety, and reliability issues with clear evidence and actionable remediation suggestions. We explicitly prioritize Rust source code, including unsafe blocks, FFI boundaries, concurrency assumptions, parsing/bounds safety, and API invariants that could lead to undefined behavior, panics, data corruption, or subtle trading logic errors. The hunt is intentionally diversified across the workspace crates (hftbacktest, connector, collector, py-hftbacktest, hftbacktest-derive) and across methods: (1) build/test signal, (2) clippy/static lint signal, and (3) targeted manual audits of high-risk areas (unsafe + transmute + raw pointers + get_unchecked + IPC). Each agent must produce a schema-conformant Run Report JSON summarizing concrete findings, pointing to the exact files/functions involved, and proposing specific fixes or hardening steps. Constraints: do not create branches, do not create git worktrees, and do not commit. Use the shared workspace policy (non-isolated run). Avoid editing repository source files; prefer read-only inspection and command output analysis.",
+  "concurrency": 10,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "high",
+    "sandbox": "workspace-write",
+    "skip_git_repo_check": false,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 3600 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "agent_01_build_and_tests",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "Agent 1/10 (Build + tests): find compile/test failures and obvious regressions.\n\nRepo: /Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest\nConstraints: non-isolated shared workspace; do not create branches; do not modify source files.\n\nTasks:\n1) Run workspace tests/build checks (use a dedicated target dir inside repo to avoid collisions):\n   - export CARGO_TARGET_DIR=\".ph_target/agent_01\"\n   - cargo test --workspace\n   - If tests are too slow, at least run: cargo test -p hftbacktest\n2) Report any failures with the exact error text excerpt (short), and pinpoint the likely root cause file/function.\n3) If everything passes, still report suspicious warnings or flaky areas discovered during build.\n\nOutput: Run Report JSON only (schema_version=1.0.0). Include files_read (best-effort) and do not list build artifacts in files_written."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_02_clippy_and_lints",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "Agent 2/10 (Clippy): surface correctness/safety issues via clippy.\n\nRepo: /Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest\nConstraints: shared workspace; no branches; do not modify source files.\n\nTasks:\n1) Run clippy across workspace/targets/features using a dedicated target dir:\n   - export CARGO_TARGET_DIR=\".ph_target/agent_02\"\n   - cargo clippy --workspace --all-targets --all-features\n2) Triage findings into: (a) potential bug/UB, (b) correctness footgun, (c) perf/alloc hotspots, (d) style/noise.\n3) For top issues, cite the exact file path + symbol and propose concrete fixes.\n\nOutput: Run Report JSON only (schema_version=1.0.0)."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_03_unsafe_audit_core_backtest",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 3/10 (Unsafe audit: core backtest): look for UB and invalid invariants in hftbacktest crate.\n\nFocus areas:\n- hftbacktest/src/backtest/** (event ordering, indices, timestamp arrays)\n- hftbacktest/src/backtest/data/** (Data/DataPtr/POD, bounds, aliasing)\n- any use of transmute / from_raw_parts / get_unchecked\n\nTasks:\n1) Enumerate unsafe blocks and explain the assumed invariants.\n2) Identify any UB risk (out-of-bounds, invalid enum discriminants, alignment, aliasing, use-after-free).\n3) Propose specific hardening steps (bounds checks, TryFrom, debug asserts, safer repr, tests).\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_04_live_bot_ipc_safety",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 4/10 (Live bot + IPC safety): audit live/ and iceoryx IPC integration.\n\nFocus:\n- hftbacktest/src/live/bot.rs (get_unchecked_mut usage, index validity, state machine)\n- hftbacktest/src/live/ipc/iceoryx.rs (assume_init, channel indexing, message decode/encode)\n\nTasks:\n1) Identify any potential out-of-bounds or race assumptions.\n2) Check error handling paths for unwrap/panic and suggest safer handling.\n3) Highlight any correctness bugs that could break live trading (wrong asset mapping, latency calc, stuck waits).\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_05_py_ffi_boundary",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 5/10 (py-hftbacktest FFI boundary): audit raw pointer + enum conversion safety.\n\nFocus:\n- py-hftbacktest/src/live.rs, backtest.rs, depth.rs, order.rs, fuse.rs\n- Look specifically for mem::transmute from u8 to enums, Box::from_raw ownership, returning pointers into Rust-owned data, and free functions.\n\nTasks:\n1) Identify UB risks (invalid transmute discriminants; null/invalid pointers; lifetime issues; double-free).\n2) Propose safe conversions (match on u8 -> enum with Unsupported) and safer FFI patterns.\n3) If possible, suggest a minimal Rust unit test or Python-side test that would catch the issue.\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_06_npy_and_data_parsing",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 6/10 (NPY + data parsing): audit bounds/overflow/endianness handling.\n\nFocus:\n- hftbacktest/src/backtest/data/npy/**\n- hftbacktest/src/backtest/data/mod.rs\n\nTasks:\n1) Look for any unchecked slicing, pointer math, or len calculations that could overflow or panic.\n2) Validate that header parsing cannot read out of bounds for malformed input.\n3) Identify correctness issues (dtype mismatch, alignment assumptions) that could silently corrupt backtests.\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_07_depth_marketdepth_logic",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 7/10 (Market depth logic): audit depth implementations for index/range logic bugs.\n\nFocus:\n- hftbacktest/src/depth/** (especially roivectormarketdepth.rs)\n- Any get_unchecked usage or tick->index mapping.\n\nTasks:\n1) Identify any scenario where best_bid_tick/best_ask_tick or roi bounds could cause out-of-range indexing.\n2) Check snapshot/apply logic for consistency and invariants (e.g., bid <= ask, non-negative qty).\n3) Suggest minimal tests to lock in invariants.\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_08_connector_resilience",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 8/10 (connector crate resilience): find panic/unwrap and protocol-handling bugs.\n\nFocus:\n- connector/src/** (binance spot/futures, bybit)\n- JSON parsing, stream reconnects, symbol mapping, order status decoding.\n\nTasks:\n1) Identify unwrap/expect that can panic on real-world data; propose error handling.\n2) Look for subtle bugs: wrong field names, incorrect timestamp units, sign/precision errors.\n3) Report any security-ish issues (e.g., trusting server data too much) relevant to stability.\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_09_collector_file_io",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 9/10 (collector crate file I/O): find data-loss/panic risks.\n\nFocus:\n- collector/src/** (file rotation, timestamping, throttling, exchange HTTP)\n\nTasks:\n1) Identify any unwrap/assumption that could panic under clock issues or API changes.\n2) Check whether file writes are atomic/durable enough for data collection; highlight truncation/corruption risks.\n3) Suggest concrete hardening (error propagation, retries, fsync strategy if needed).\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_10_derive_macro_safety",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 10/10 (hftbacktest-derive): audit proc-macro robustness and generated code risks.\n\nFocus:\n- hftbacktest-derive/src/lib.rs\n\nTasks:\n1) Identify unwrap/panic that could break downstream builds; propose turning into syn::Error where appropriate.\n2) Check for generated code that might be unsound or surprising (e.g., assumes repr/layout).\n3) Suggest minimal compile-time tests (trybuild style) if applicable.\n\nOutput: Run Report JSON only (schema_version=1.0.0). Do not modify source files."
+        }
+      ]
+    }
+  ]
+}

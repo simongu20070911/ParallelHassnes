@@ -1,0 +1,31 @@
+{
+  "spec_version": "1.0.0",
+  "working_root": "/Users/simongu/Desktop/ParallelHassnes",
+  "batch_goal_summary": "SMOKE TEST: Verify Codex web_search works end-to-end under ParallelHassnes and that final.json is written.",
+  "concurrency": 1,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "high",
+    "sandbox": "read-only",
+    "skip_git_repo_check": false,
+    "web_search_enabled": true,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 600 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "smoke_web_search_run_report",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 300,
+          "prompt": "SMOKE TEST ONLY.\n\nTask: Use web search to find the official Federal Reserve page that states the release time for the H.4.1 statistical release.\n\nThen output VALID Run Report JSON (schema_version 1.0.0) with:\n- status: ok\n- summary: include the URL you found\n- files_read: []\n- files_written: []\n- artifacts: []\n\nOutput MUST be JSON only (no markdown)."
+        }
+      ]
+    }
+  ]
+}

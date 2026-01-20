@@ -1,0 +1,32 @@
+{
+  "spec_version": "1.0.0",
+  "working_root": "/Users/simongu/ParallelHassnes",
+  "batch_goal_summary": "SMOKE TEST (HOME ROOT): Verify Codex web_search works end-to-end under ParallelHassnes after relocating the harness from Desktop (iCloud-synced) to the home directory. This batch is solely to validate infrastructure correctness: queue ingest, scheduling, runner invocation, event capture, and writing of final.txt/final.json/handoff.json. Requirements: (1) web_search must execute successfully inside the agent run when enabled; (2) the agent must complete a turn and emit schema-conformant Run Report JSON (schema_version 1.0.0); (3) the harness must write final.txt, final.json, and handoff.json into the attempt directory; (4) the attempt must terminalize (succeeded/failed/needs_attention) and update current.json accordingly; (5) the tick loop must not wedge even when the runs store contains historical large batches and previously unreadable paths. The agent task is minimal: locate the official Federal Reserve H.4.1 release page and return the URL in the summary. Workspace mode is shared to avoid disk bloat. Success is mechanical: artifacts exist and are readable from disk without manual intervention. Failure is defined as stalling at the web_search tool request, missing artifacts, or a non-terminal attempt state.",
+  "batch_id": "batch_web_search_smoke_home_20260119",
+  "concurrency": 1,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "high",
+    "sandbox": "read-only",
+    "skip_git_repo_check": false,
+    "web_search_enabled": true,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 600 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "smoke_web_search_run_report",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 300,
+          "prompt": "SMOKE TEST ONLY.\n\nTask: Use web search to find the official Federal Reserve page that states the release time for the H.4.1 statistical release.\n\nThen output VALID Run Report JSON (schema_version 1.0.0) with:\n- status: ok\n- summary: include the URL you found\n- files_read: []\n- files_written: []\n- artifacts: []\n\nOutput MUST be JSON only (no markdown)."
+        }
+      ]
+    }
+  ]
+}

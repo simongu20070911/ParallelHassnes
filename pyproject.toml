@@ -1,0 +1,13 @@
+[project]
+name = "parallelhassnes"
+version = "0.1.0"
+description = "ParallelHassnes: filesystem-first batch harness for Codex CLI (MVP)"
+requires-python = ">=3.11"
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "uvicorn>=0.25"]
+
+[tool.setuptools]
+
+[tool.setuptools.packages.find]
+include = ["parallelhassnes*"]

@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ParallelHassnes Run Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "summary", "files_read", "files_written", "artifacts"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$",
+      "description": "Run Report schema version (major must match reader)."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "failed", "needs_attention"],
+      "description": "Overall run outcome from the agent's perspective."
+    },
+    "summary": {
+      "type": "string",
+      "description": "Short human-readable summary of what was done and the result."
+    },
+    "files_read": {
+      "type": "array",
+      "description": "Repo-relative file paths explicitly inspected by the agent (best-effort).",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "files_written": {
+      "type": "array",
+      "description": "Repo-relative file paths explicitly modified/created by the agent (best-effort).",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "artifacts": {
+      "type": "array",
+      "description": "Additional outputs produced by the run, referenced by path.",
+      "default": [],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "kind", "description"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Filesystem path to the artifact (repo-relative or run-dir-relative by convention)."
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["file", "directory", "report", "patch", "log", "other"],
+            "description": "Artifact classification for downstream automation."
+          },
+          "description": {
+            "type": "string",
+            "description": "Short explanation of what the artifact contains."
+          }
+        }
+      }
+    }
+  }
+}

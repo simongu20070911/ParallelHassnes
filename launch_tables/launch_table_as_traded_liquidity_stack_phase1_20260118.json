@@ -1,0 +1,191 @@
+{
+  "working_root": "/Users/simongu/Desktop/ParallelHassnes",
+  "batch_goal_summary": "Build an as-traded data spec for structural, tradable liquidity-plumbing alpha research in US rates. The non-negotiable constraint is: no approximation on the data pipeline. For each required series we must (1) define observation semantics precisely (what timestamp/date the value refers to), (2) obtain exact public release timestamps (time-of-day + timezone + holiday/early-close exceptions) from primary sources rather than relying on FRED ingestion timing, and (3) confirm real-time vintage availability (values as known then) via ALFRED or an alternative archive, including revision/correction policy. Output must be machine-actionable: each agent provides a narrative plus a machine-readable SeriesSpec YAML block and at least three test cases with concrete timestamps. We assume a conservative tradability standard: if a release occurs on trading day D, the signal_day is D and the earliest tradable entry is the next trading day (enter at close of D+1 for daily-close backtests). Literature agents gather papers/notes about TGA/RRP/reserves/repo plumbing and explicitly extract timing assumptions and identification strategies. A verifier independently re-derives timing for the highest-leverage series to catch subtle errors. This batch is read-only with web research enabled; it should produce artifacts suitable for later integration into code and for preventing false alpha from lookahead or timestamp mistakes.",
+  "concurrency": 8,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "high",
+    "sandbox": "read-only",
+    "skip_git_repo_check": true,
+    "web_search_enabled": true,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": {
+    "max_attempts": 1
+  },
+  "timeouts": {
+    "step_timeout_seconds": 5400
+  },
+  "workspace_policy": {
+    "mode": "isolated"
+  },
+  "jobs": [
+    {
+      "job_id": "series_01_wresbal_reserves",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a vertical-slice data spec agent. GOAL: produce an as-traded SeriesSpec for WRESBAL (Reserve Balances with Federal Reserve Banks) with real-time vintages + exact release timestamps. No approximation.\n\nTRADABILITY STANDARD: if release occurs on trading day D (America/New_York), signal_day=D and entry_day=next trading day after D (assume entry at close(entry_day) for daily-close backtests). If release occurs on weekend/holiday, signal_day is the next trading day.\n\nSCOPE: WRESBAL only.\nREQUIRED: (1) observation semantics, (2) exact release timestamp rule + evidence, (3) revision/vintage policy and how to fetch vintages (ALFRED if possible), (4) mapping rules to signal_day/entry_day, (5) >=3 concrete historical test cases with known release timestamps.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). In summary include a YAML block delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "series_02_wtregen_tga_dts",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a vertical-slice data spec agent. GOAL: produce an as-traded SeriesSpec for WTREGEN (Treasury General Account) with real-time vintages + exact Treasury DTS release timestamps/semantics. No approximation.\n\nTRADABILITY STANDARD: if release occurs on trading day D (America/New_York), signal_day=D and entry_day=next trading day after D (assume entry at close(entry_day) for daily-close backtests). If release occurs on weekend/holiday, signal_day is the next trading day.\n\nSCOPE: WTREGEN and the Treasury Daily Treasury Statement (DTS) release that governs its availability/semantics.\nREQUIRED: (1) observation semantics (what time the TGA balance refers to), (2) exact release time-of-day rule for DTS (include timezone, holiday/exception behavior), (3) revisions/corrections and ALFRED vintage feasibility (or alternative archive), (4) mapping to signal_day/entry_day, (5) >=3 historical test cases with known release timestamps.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include SeriesSpec YAML block in summary delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "series_03_rrpontsyd_on_rrp",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a vertical-slice data spec agent. GOAL: produce an as-traded SeriesSpec for RRPONTSYD (Overnight Reverse Repurchase Agreements: Treasury Securities Sold by the Federal Reserve in the Temporary Open Market Operations) with real-time vintages + exact NY Fed posting times and exceptions. No approximation.\n\nTRADABILITY STANDARD: if release occurs on trading day D (America/New_York), signal_day=D and entry_day=next trading day after D (assume entry at close(entry_day) for daily-close backtests). If release occurs on weekend/holiday, signal_day is the next trading day.\n\nSCOPE: RRPONTSYD only (ON RRP usage), and the primary-source posting time rule (NY Fed) that determines availability. Confirm whether FRED/ALFRED reflect the same vintage timing or are delayed.\nREQUIRED: (1) observation semantics, (2) exact posting/release time rule (time-of-day + timezone + exceptions), (3) revisions/corrections and vintage feasibility (ALFRED or alternative archive), (4) mapping to signal_day/entry_day, (5) >=3 historical test cases.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include SeriesSpec YAML block in summary delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "series_04_rpontsyd_rptsyd_fed_repo_ops",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a vertical-slice data spec agent. GOAL: produce as-traded SeriesSpecs for RPONTSYD and RPTSYD (Fed repo/repurchase agreements series; asset-side injections) with real-time vintages + exact release/availability timestamps. No approximation.\n\nTRADABILITY STANDARD: if release occurs on trading day D (America/New_York), signal_day=D and entry_day=next trading day after D (assume entry at close(entry_day) for daily-close backtests). If release occurs on weekend/holiday, signal_day is the next trading day.\n\nSCOPE: RPONTSYD and RPTSYD. Clarify what each series measures, observation semantics (as-of what time), and exact availability timing. Distinguish Fed repo ops (asset) from ON RRP (liability).\nREQUIRED for each series: semantics, exact release time rule (primary source), revision/vintage feasibility (ALFRED or alternative), mapping to signal_day/entry_day, >=3 test cases.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include SeriesSpec YAML block(s) in summary delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "series_05_walcl_h41",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a vertical-slice data spec agent. GOAL: produce an as-traded SeriesSpec for WALCL (Fed total assets, H.4.1) with real-time vintages + exact H.4.1 release timestamps and exceptions. No approximation.\n\nTRADABILITY STANDARD: if release occurs on trading day D (America/New_York), signal_day=D and entry_day=next trading day after D (assume entry at close(entry_day) for daily-close backtests). If release occurs on weekend/holiday, signal_day is the next trading day.\n\nSCOPE: WALCL only.\nREQUIRED: (1) semantics (as-of what date/time), (2) exact H.4.1 release time rule (time-of-day + timezone + holiday exceptions), (3) revisions/vintages (ALFRED feasibility), (4) signal_day/entry_day mapping, (5) >=3 historical test cases.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include SeriesSpec YAML block in summary delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "series_06_wcurcir_currency",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a vertical-slice data spec agent. GOAL: produce an as-traded SeriesSpec for WCURCIR (Currency in Circulation) with real-time vintages + exact release timing. No approximation.\n\nTRADABILITY STANDARD: if release occurs on trading day D (America/New_York), signal_day=D and entry_day=next trading day after D (assume entry at close(entry_day) for daily-close backtests). If release occurs on weekend/holiday, signal_day is the next trading day.\n\nSCOPE: WCURCIR only.\nREQUIRED: semantics, exact release timing rule + evidence, revisions/vintage feasibility, signal_day/entry_day mapping, >=3 test cases.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include SeriesSpec YAML block in summary delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "series_07_treast_soma_treasuries",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a vertical-slice data spec agent. GOAL: produce an as-traded SeriesSpec for TREAST (SOMA Treasuries held outright) with real-time vintages + exact release timestamps, including the critical 'as-of Wednesday' vs release date/time mapping. No approximation.\n\nTRADABILITY STANDARD: if release occurs on trading day D (America/New_York), signal_day=D and entry_day=next trading day after D (assume entry at close(entry_day) for daily-close backtests). If release occurs on weekend/holiday, signal_day is the next trading day.\n\nSCOPE: TREAST only.\nREQUIRED: (1) semantics (as-of date/time), (2) exact release time rule for H.4.1 / SOMA holdings, (3) revisions/vintage feasibility, (4) explain whether any true daily as-traded series exists for SOMA holdings or whether weekly is the maximal public granularity, (5) mapping to signal_day/entry_day, (6) >=3 test cases.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include SeriesSpec YAML block in summary delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "series_08_wshomcb_soma_mbs",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a vertical-slice data spec agent. GOAL: produce an as-traded SeriesSpec for WSHOMCB (SOMA MBS held outright) with real-time vintages + exact release timestamps, including the 'as-of Wednesday' vs release date/time mapping. No approximation.\n\nTRADABILITY STANDARD: if release occurs on trading day D (America/New_York), signal_day=D and entry_day=next trading day after D (assume entry at close(entry_day) for daily-close backtests). If release occurs on weekend/holiday, signal_day is the next trading day.\n\nSCOPE: WSHOMCB only.\nREQUIRED: semantics, exact release time rule, revisions/vintage feasibility, whether any true daily as-traded holdings exist, mapping to signal_day/entry_day, >=3 test cases.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include SeriesSpec YAML block in summary delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "series_09_policy_funding_rates",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a vertical-slice data spec agent. GOAL: produce as-traded SeriesSpecs for the policy/funding rate family: IORB, EFFR, SOFR, OBFR. No approximation on release timestamps or real-time vintages.\n\nTRADABILITY STANDARD: if release occurs on trading day D (America/New_York), signal_day=D and entry_day=next trading day after D (assume entry at close(entry_day) for daily-close backtests).\n\nSCOPE: IORB, EFFR, SOFR, OBFR.\nREQUIRED per series: semantics (what time does the 'daily rate' refer to), exact publication time rule + evidence (time-of-day; corrections policy), revisions/vintage feasibility, mapping to signal_day/entry_day, >=3 test cases.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include SeriesSpec YAML blocks in summary delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "series_10_outcomes_bills_curve_real_be",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a vertical-slice data spec agent. GOAL: produce as-traded SeriesSpecs for market outcome series used in the alpha research: DTB3, DGS1MO, DGS3MO, DGS2, DGS10, DGS30, DFII10, T10YIE. No approximation on release timestamps or real-time vintages.\n\nTRADABILITY STANDARD: for these outcomes, define the timestamp semantics (end-of-day quote? model-implied?) and the publication/revision policy. If exact timestamps are not meaningful because the series is a constructed end-of-day yield, say so and document what is knowable and when.\n\nSCOPE: DTB3, DGS1MO, DGS3MO, DGS2, DGS10, DGS30, DFII10, T10YIE.\nREQUIRED: semantics, availability timing (if applicable), revisions/vintage feasibility, and implications for backtests that use daily close-to-close returns.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include SeriesSpec YAML blocks in summary delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "lit_11_plumbing_alpha_tga_rrp_reserves",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a literature agent (high effort). GOAL: gather and summarize research/papers/notes on TGA, ON RRP, reserve balances, and their impact on bills/repo/front-end rates and broader risk assets. Extract exact timing assumptions used by each source.\n\nREQUIRED OUTPUT: (1) a concise narrative of the strongest mechanisms for tradable alpha; (2) a machine-readable YAML block where each item is a 'paper' with fields embedded in the SeriesSpec schema (use series_id like paper:<slug>), including authors/year, URL, what data they used, and what timing/vintage assumptions they made.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include YAML block delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "lit_12_fed_balance_sheet_ops_qe_qt_impl",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a literature agent (high effort). GOAL: gather research/papers/official docs on Fed balance sheet implementation vs announcement: QE purchase operations timing, QT runoff predictability, settlement/auction interactions, and what is publicly known when.\n\nREQUIRED: extract exact timing assumptions (release times, operation announcement times, settlement lags) and identify what is tradable with a T+1 entry rule.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include YAML block delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END (use paper:<slug> items). END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "lit_13_repo_microstructure_onrrp_vs_private",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a literature agent (high effort). GOAL: gather research/official sources on repo microstructure: ON RRP vs private repo markets, repo rate benchmarks, what 'repo activity' means, and which measures best capture scarcity/tightness. Focus on exact data availability timing and revisions.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include YAML block delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END (use paper:<slug> items and, if needed, series_id like dataset:<slug>). END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "lit_14_identification_best_practices_lookahead",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are a literature/methods agent (high effort). GOAL: collect best practices for identifying causal/predictive effects with macro/liquidity series under (a) revisions/vintages and (b) release timestamp alignment. Focus on methods used in finance/econometrics to avoid lookahead and to handle overlapping horizons.\n\nREQUIRED: produce a small set of recommended 'as-traded backtest rules' and cite sources that explicitly discuss vintage data, release calendars, and overlap-robust inference.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include YAML block delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END (use paper:<slug>). END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "verify_15_independent_timing_verifier",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "You are an independent verifier. GOAL: independently derive exact release timestamp rules (primary sources) and vintage feasibility for the three highest-leverage drivers: WTREGEN (TGA/DTS), RRPONTSYD (ON RRP), and WALCL (H.4.1). You are not allowed to rely on other agents; derive from scratch.\n\nDELIVERABLE: narrative + SeriesSpec YAML for these three series + explicit contradictions/uncertainties.\n\nOUTPUT (STRICT): valid Run Report JSON only (schema_version=1.0.0). Include YAML block delimited by SERIES_SPEC_YAML_BEGIN / SERIES_SPEC_YAML_END. END summary with exactly 3 lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n"
+        }
+      ]
+    }
+  ]
+}
+

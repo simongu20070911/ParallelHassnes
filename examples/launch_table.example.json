@@ -1,0 +1,23 @@
+{
+  "working_root": "/Users/simongu/Desktop/ParallelHassnes",
+  "batch_goal_summary": "This batch exists to validate the ParallelHassnes end-to-end workflow with minimal moving parts. The goal is to submit a Launch Table, have the harness normalize it into batch_meta.json, and then schedule steps onto a runner that writes well-formed attempt directories. The first step is a simple dry-run to ensure the runner can create meta.json and state.json, produce a schema-conformant final.json, and update current.json pointers without relying on raw event traces. The second step validates resume semantics by resuming from the first step and ensuring the copy-on-resume codex_home snapshot logic is used so resume_from can point to any earlier step deterministically. This batch is also intended to validate scoreboard derivation, including blocked reasons, running detection, and attention categorization, without requiring the orchestrator to tail raw Codex events. Finally, this batch checks that central harness configuration snapshots exist, do not contain secrets, and that attempt directories remain immutable after completion aside from atomic state.json updates while running.",
+  "jobs": [
+    {
+      "job_id": "job_demo",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "step1",
+          "prompt": "Produce a minimal Run Report JSON and do not touch the repository."
+        },
+        {
+          "step_id": "step2",
+          "resume_from": { "step_id": "step1", "selector": "latest_successful" },
+          "prompt": "Continue from step1 and produce another minimal Run Report JSON.",
+          "append_prompt": "This is the appended prompt for the resume step."
+        }
+      ]
+    }
+  ]
+}
+

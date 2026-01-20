@@ -1,0 +1,102 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+  "batch_goal_summary": "Build a high-quality starting point for ES (CME) intraday/HFT alpha research using Databento GLBX.MDP3 TBBO data already present under ES_CME. Constraints are explicit: fee is $0.58 per side ($1.16 round trip), target is many round trips/day while keeping statistically defensible net-of-costs EV, and latency from signal to CME order update is assumed ~1ms one-way. The immediate objective is to generate concrete, testable hypotheses and an implementable offline research harness spec that respects what TBBO can and cannot support. Each agent produces an actionable deliverable: (1) data inventory + TBBO-derived feature candidates, (2) execution/simulator design under TBBO limitations, (3) specific scalping hypotheses suitable for high trade counts, (4) evaluation methodology for robustness and plateau-finding, (5) posterior-log schema for meta-experiment tracking and Bayesian updating, (6) regime/adaptation ideas that avoid overfitting, and (7) engineering setup guidance for Rust sims and remote execution. Outputs must be immediately useful to start coding the pipeline and running experiments across the 26 day-files, while keeping manual inspection hooks (heatmaps, failure modes, event traces) front and center.",
+  "concurrency": 7,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "read-only",
+    "skip_git_repo_check": true,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": {
+    "max_attempts": 1
+  },
+  "timeouts": {
+    "step_timeout_seconds": 3600
+  },
+  "workspace_policy": {
+    "mode": "shared"
+  },
+  "jobs": [
+    {
+      "job_id": "agent_01_data_inventory_features",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 1/7: Data inventory + features.\n\nRead goal.md and inspect ES_CME/*/archive to infer the dataset: schema, fields, timestamps, trading session coverage, and what microstructure information is present vs absent. Deliver:\n- A precise inventory of what TBBO gives us per update and what constraints it implies for fill simulation.\n- A prioritized list of TBBO-derived feature families for high-frequency scalping (spread/queue proxy, microprice proxy, update-rate, mid return/vol, run-length, imbalance proxies from top-of-book size, staleness).\n- A short list of 8–12 “first plots/tables” to sanity-check edge and stability across days (heatmaps, time-of-day slices, volatility buckets, spread states).\n\nOutput format: valid Run Report JSON only (schema_version=1.0.0). Touch zero repository files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_02_tbbo_execution_sim_design",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 2/7: Execution + simulator design under TBBO.\n\nGoal: specify an offline fill/PNL simulator that uses only TBBO updates (top-of-book bid/ask price+size, timestamps) and supports:\n- taker-heavy marketable limit entries/exits,\n- limit+stop style logic (native stop semantics approximated as trigger + marketable limit),\n- 1ms one-way latency assumption,\n- fee model: $0.58 per side.\n\nDeliver:\n- A clear fill model: what events cause fills, how to model spread crossings, what is and is not identifiable from TBBO (no depth/queue position).\n- A minimal simulator API proposal (data ingest → event loop → order state machine → fills → pnl) with key state variables.\n- A plan for stress-testing assumptions (latency jitter, adverse selection proxy, spread widening) and detecting when TBBO-only simulation becomes misleading.\n\nOutput format: valid Run Report JSON only (schema_version=1.0.0). Touch zero repository files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_03_scalping_hypotheses_tbbo",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 3/7: Concrete scalping hypotheses (TBBO-feasible).\n\nGoal: propose 10–15 testable, TBBO-feasible hypotheses for ES scalping with high trade counts (aiming for 200+ round trips/day as a design target). Assume fee $1.16 per round trip; latency ~1ms. Focus on pure price action / top-of-book dynamics.\n\nDeliver for each hypothesis:\n- Signal definition (inputs, thresholds),\n- Trade action (entry/exit policy),\n- Expected failure mode and the regime where it might work,\n- One key parameter plane to sweep for plateau search.\n\nExamples of hypothesis types: impulse/exhaustion, micro-trend continuation with fast exit, mean reversion after spread-widening events, “staleness” / quote-refresh momentum, volatility burst scalps with cooldown, time-of-day liquidity state changes.\n\nOutput format: valid Run Report JSON only (schema_version=1.0.0). Touch zero repository files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_04_robust_eval_plateaus",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 4/7: Robust evaluation + plateau methodology.\n\nGoal: specify how to evaluate strategies so results are net-of-costs, stable out-of-sample, robust to small parameter changes, and sized modestly without collapse. Data is TBBO only.\n\nDeliver:\n- A walk-forward/blocked CV scheme across the 26 day-files with clear train/val/test split logic.\n- Metrics: net EV/trade, net EV/day, drawdown proxies, turnover, hit-rate, tail risk; include spread-state conditioned metrics.\n- Plateau/heatmap approach: how to detect “needle” optima vs broad plateaus, plus how to visualize parameter sensitivity.\n- A minimal set of falsification tests (time-of-day buckets, vol regimes, spread widening, shock windows).\n\nOutput format: valid Run Report JSON only (schema_version=1.0.0). Touch zero repository files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_05_posterior_log_bayes",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 5/7: Posterior log for meta-experiments.\n\nGoal: design a “posterior log” system that tracks beliefs over (hypothesis, parameter preset, regime) utility and updates with experiment outcomes. This is a meta-research posterior, not a “next price” posterior.\n\nDeliver:\n- A concrete JSONL schema for experiment records (code hash, data span, config, costs/latency assumptions, metrics, failure modes).\n- A Bayesian update proposal (e.g., hierarchical model or Beta/Normal-Gamma style) that outputs uncertainty and supports Thompson sampling or model averaging.\n- A small set of operator-facing views: best current bets, uncertainty, where evidence is thin, and “edge decay” detection.\n\nOutput format: valid Run Report JSON only (schema_version=1.0.0). Touch zero repository files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_06_regime_adaptation",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 6/7: Regime + adaptation without overfitting.\n\nGoal: propose a practical approach to adapting parameters/policies as market conditions shift, using only TBBO-derived evidence. Deliver:\n- A small, robust regime feature set (time-of-day, volatility, spread state, update-rate, trendiness).\n- A mapping from regime to parameter presets (discrete) and an update rule (Bayesian bandits, smoothing, hysteresis) that avoids thrash.\n- A monitoring checklist: when to reduce aggressiveness, when to pause, when to widen thresholds.\n\nOutput format: valid Run Report JSON only (schema_version=1.0.0). Touch zero repository files."
+        }
+      ]
+    },
+    {
+      "job_id": "agent_07_engineering_remote_rust",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 1800,
+          "prompt": "Agent 7/7: Engineering setup (Rust sims + remote).\n\nGoal: propose the best engineering setup to run large parameter sweeps and simulations using Rust (preferred) and the remote host gaen@192.168.110.42. Deliver:\n- Repo layout proposal (data ingest, features, sim, eval, plotting, experiment registry).\n- How to parse .tbbo.dbn.zst efficiently (libraries/crates, streaming zstd, time filtering).\n- How to parallelize sweeps safely (process model, caching, artifact layout) and pull results back.\n- A minimal command set for running day-batches and generating heatmaps/failure reports.\n\nOutput format: valid Run Report JSON only (schema_version=1.0.0). Touch zero repository files."
+        }
+      ]
+    }
+  ]
+}

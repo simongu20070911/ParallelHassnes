@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ParallelHassnes Run Attempt state.json",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["status"],
+  "properties": {
+    "status": { "type": "string", "enum": ["queued", "running", "succeeded", "failed", "canceled", "needs_attention"] },
+    "started_at": { "type": "string" },
+    "ended_at": { "type": "string" },
+    "last_heartbeat_at": { "type": "string" },
+    "pid": { "type": "integer" },
+    "exit_code": { "type": "integer" },
+    "errors": { "type": "array", "items": { "type": "string" } },
+    "current_item": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "running" } } },
+      "then": { "required": ["started_at", "last_heartbeat_at"] }
+    },
+    {
+      "if": { "properties": { "status": { "enum": ["succeeded", "failed", "canceled", "needs_attention"] } } },
+      "then": { "required": ["started_at", "ended_at"] }
+    }
+  ]
+}
+

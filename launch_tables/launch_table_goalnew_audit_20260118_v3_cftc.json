@@ -1,0 +1,245 @@
+{
+  "working_root": "/Users/simongu/Desktop/ParallelHassnes",
+  "batch_goal_summary": "Run a 20-agent, read-only audit of /Users/simongu/fomc_surprise_flow_study against the REQUIRED goal in goalnew.md (Project: Liquidity & Component Decomposition). This analysis claims to upgrade from slow SOMA accounting \u201cflow\u201d to a higher-frequency \u201cNet Liquidity\u201d factor (Net_Liq = SOMA \u2212 TGA \u2212 RRP; shock = \u039420(Net_Liq)) and to decompose nominal rates moves into real vs inflation vs term-premium components. Each agent must validate ONE narrow slice (2\u20133 checks) with concrete evidence. Key required modules: Phase 1 Net Liquidity using FRED series (SOMA via H.4.1, TGA WTREGEN, RRP RRPONTSYD) with careful alignment/ffill guards; Phase 2 outcomes decomposed into DGS10/DFII10/T10YIE (real vs breakeven) and TIP; Phase 3 crowdedness filter using weekly CFTC legacy net non-commercial positioning (net/open interest as a fraction, bucketed front/belly/long) with conservative availability lag (as-of Tue, available as-of+4 calendar days then next trading day) and Surprise\u00d7Positioning interaction; Phase 4 \u201cfear vs fundamentals\u201d via NY Fed ACM term premium vs risk-neutral yield. Agents must check that outputs/report.md and outputs/signal_dashboard.md match the empirical tables/figures and do not overclaim. Constraints: do not modify repo files, do not regenerate outputs in-place, do not paste long logs. Output MUST be valid Run Report JSON only (schema_version=1.0.0) and the summary MUST end with exactly three grep-friendly lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA. (v3: capture codex.events.jsonl + codex stdout/stderr logs; no dangerous bypass when sandbox set.)",
+  "concurrency": 6,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "medium",
+    "sandbox": "read-only",
+    "skip_git_repo_check": true,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": {
+    "max_attempts": 1
+  },
+  "timeouts": {
+    "step_timeout_seconds": 3600
+  },
+  "workspace_policy": {
+    "mode": "isolated"
+  },
+  "jobs": [
+    {
+      "job_id": "audit_01_cftc_loader_patterns",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor (critic/verifier). Read-only: do NOT modify files or regenerate outputs in-place.\n\nGOAL: Audit against goalnew.md (Phase 3 crowdedness filter).\nSCOPE: CFTC legacy COT ingestion: market-name pattern matching across years, bucket definitions (front/belly/long), and net non-commercial %OI computation.\nINPUT: goalnew.md; run_analysis.py (load_cftc_treasury_positioning_deacot); outputs/tables/cftc_positioning_weekly.csv.\nDONE: Confirm patterns match expected Treasury futures names over time; flag over/under-matching risks and any obvious bucket misclassification.\n\nOUTPUT: valid Run Report JSON only (schema_version=1.0.0).\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_02_cftc_lookahead_alignment",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate Phase 3 timing: ensure CFTC positioning is aligned without lookahead.\nSCOPE: as-of Tuesday -> availability date logic (asof+3d then next trading day) and daily forward-fill guarding.\nINPUT: run_analysis.py (availability mapping + align_ffill_with_max_gap); outputs/tables/cftc_positioning_weekly.csv; outputs/tables/cftc_positioning_daily.csv.\nDONE: Check that on a typical Wednesday FOMC date, the positioning used would come from the last published COT report (not current week). Provide at least one concrete date example.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_03_localproj_pos_mapping",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate Phase 3 in event-horizon local projections.\nSCOPE: positioning_col_for_series mapping (front/belly/long), dropna logic, and that local_projection_posterior.csv records positioning_col correctly.\nINPUT: run_analysis.py (positioning_col_for_series, fit_local_projection); outputs/tables/local_projection_posterior.csv.\nDONE: Confirm that SHY/^IRX use front, IEF/^TNX use belly, TLT/^TYX use long (or flag mismatches). Spot-check a few rows in the CSV.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_04_daily_model_pos_mapping",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate Phase 3 in the daily Bayesian joint decomposition model.\nSCOPE: positioning_raw_daily_for_asset mapping and interaction construction; ensure per-asset positioning_bucket is recorded.\nINPUT: run_analysis.py (daily model section); outputs/tables/bayesian_joint_model_posterior.csv; outputs/bayesian_model_spec.md.\nDONE: Verify that different assets can use different CFTC buckets and that Surprise\u00d7Positioning is computed after dropping NaNs. Flag any leakage or scaling mistakes.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_05_dashboard_crowdedness_row",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate the dashboard 'Crowdedness' row is computed and labeled correctly.\nSCOPE: Trace the crowdedness row in outputs/signal_dashboard.md to the underlying local_projection_posterior.csv values (TLT H=1 interaction \u03b4 and CI).\nINPUT: outputs/signal_dashboard.md; outputs/signal_dashboard.csv; outputs/tables/local_projection_posterior.csv.\nDONE: Confirm the numbers match and the metric label reflects CFTC vs CTA correctly.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_06_metadata_provenance_cftc",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate reproducibility/provenance for CFTC inputs.\nSCOPE: data/raw/metadata.json entries for cftc_deacot: url_template, per-year files, sha256, cached flags.\nINPUT: data/raw/metadata.json; data/raw/cftc_deacot_*.zip.\nDONE: Confirm metadata completeness and that files appear cached with checksums.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_07_data_dictionary_phase3",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nGOAL: Validate Phase 3 is correctly documented (data dictionary + report text) without stale claims.\nSCOPE: outputs/data_dictionary.md + outputs/data_dictionary.csv entries for CFTC positioning; check that it states fraction-of-OI (0.03=3%), and availability (as-of + 4d), and that referenced artifacts exist.\nINPUT: outputs/data_dictionary.md; outputs/data_dictionary.csv; outputs/tables/cftc_positioning_weekly.csv; outputs/report.md.\nDONE: Provide 2 spot-checks where a statement in the data dictionary/report is supported by a concrete table row or code line.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_08_readme_flags_repro",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate README is aligned with goalnew.md and the current CLI behavior.\nSCOPE: quickstart command correctness, mention of Net Liquidity, mention of positioning_source default, and data sources list.\nINPUT: README.md; goalnew.md; run_analysis.py (parse_args).\nDONE: Flag contradictions or missing flags; suggest minimal wording changes.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_09_phase1_netliq_regressor",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate Phase 1 Net Liquidity construction still matches goalnew.md.\nSCOPE: Net_Liq = SOMA\u2212TGA\u2212RRP units, \u039420(NetLiq), ffill guards, and whether net_liquidity_daily.csv looks sane.\nINPUT: run_analysis.py (net_liquidity_bil, align_ffill_with_max_gap); outputs/tables/net_liquidity_daily.csv; outputs/figures/timeseries_net_liquidity.png.\nDONE: Confirm or flag unit/alignment errors.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_10_phase2_real_vs_breakeven",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate Phase 2 outcome decomposition (real vs breakevens) is implemented correctly.\nSCOPE: DFII10/T10YIE/DGS10 alignment, BE10_calc = DGS10-DFII10, and impulse response figure consistency.\nINPUT: run_analysis.py; outputs/figures/impulse_response_localproj_10y_components.png; outputs/tables/local_projection_posterior.csv.\nDONE: Confirm or flag unit/sign mistakes and interpretability pitfalls.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_11_phase4_acm_source",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate Phase 4 uses NY Fed ACM term premium dataset correctly.\nSCOPE: download/cache of nyfed_acm_term_premia.xls, correct columns (ACMTP10, ACMRNY10), alignment to trading days.\nINPUT: run_analysis.py (load_nyfed_acm_term_premia); data/raw/nyfed_acm_term_premia.xls; outputs/figures/impulse_response_localproj_acm_10y.png.\nDONE: Confirm or flag data-source/units issues.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_12_phase4_fear_check",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate the Phase 4 'fear vs fundamentals' check matches the stated hypothesis.\nSCOPE: Regression design for event-day shock mean reversion vs continuation for TP10 and RN10; confirm table/figure are consistent.\nINPUT: run_analysis.py (fear check); outputs/tables/fear_check_term_premium_vs_rn.csv; outputs/figures/fear_check_term_premium_vs_rn.png; outputs/report.md.\nDONE: Confirm the implemented test matches the hypothesis or propose minimal improvements.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_13_multi_horizon_months",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate the multi-horizon post-FOMC module (H={1,5,20,60,120}) is correct.\nSCOPE: cumulative outcome definitions (yields bps, ETFs log return bps), binning logic, bootstrap CI.\nINPUT: run_analysis.py; outputs/tables/event_multi_horizon_long.csv; outputs/tables/multi_horizon_bin_averages.csv; outputs/figures/multi_horizon_cum_by_surprise_*.png.\nDONE: Confirm or flag calculation bugs.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_14_event_alignment_calendar",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate event alignment to trading calendar.\nSCOPE: align_event_dates_to_index behavior (NaT preservation), after-close alignment rule, and event table outputs.\nINPUT: run_analysis.py (align_event_dates_to_index, build_fomc_event_table); outputs/tables/fomc_events_aligned.csv.\nDONE: Check for potential off-by-one day errors and identify any NaT/missing-date handling issues.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_15_liquidity_ffill_guards",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate ffill/no-extrapolation guards for sparse series.\nSCOPE: align_ffill_with_max_gap logic, max_gap choices for SOMA/TGA/RRP, and whether it avoids multi-year fills.\nINPUT: run_analysis.py (align_ffill_with_max_gap, net_liquidity_bil); outputs/tables/net_liquidity_daily.csv.\nDONE: Flag any ways this could still introduce stale data or inadvertently drop too much.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_16_netliq_vs_soma_comp",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate the Phase 1 'NetLiq vs SOMA' comparison module (H=20).\nSCOPE: whether netliq and soma predictors are standardized comparably and the figure/table are consistent.\nINPUT: outputs/tables/liquidity_vs_soma_comparison_h20.csv; outputs/figures/predictive_netliq_vs_soma_h20.png; run_analysis.py.\nDONE: Confirm or flag scaling issues and interpretability.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_17_signal_dashboard_trade_mapping",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate the final deliverable: the 'Regime-Based Signal Dashboard' matches goalnew.md and is actionable without overclaiming.\nSCOPE: mapping rows (Liquidity/Inflation/Growth/Positioning/Fear), check that each empirical check references a concrete table/figure, and that trade implication text is consistent with CI logic.\nINPUT: goalnew.md; outputs/signal_dashboard.md; outputs/report.md.\nDONE: Identify missing dashboard rows, unclear wording, or any mismatched implications.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_18_report_consistency",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Check that outputs/report.md is internally consistent and accurately reflects current code (especially Phase 3 CFTC positioning).\nSCOPE: check for stale statements, contradictions, and whether referenced artifacts exist.\nINPUT: outputs/report.md; run_analysis.py; outputs/tables/.\nDONE: Provide at least 2 concrete spot-checks (a number and its source table row).\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_19_repro_no_web_assumptions",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Validate reproducibility claims.\nSCOPE: confirm that outputs specify exact CLI command, cached raw inputs, and that required args (like --end) are enforced. Also check that any optional knobs (positioning_source) are documented in specs.\nINPUT: run_analysis.py (parse_args); outputs/report.md; data/raw/metadata.json; outputs/local_projection_spec.md; outputs/bayesian_model_spec.md.\nDONE: Flag anything that would make a clean rerun non-reproducible.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "audit_20_dead_refs_cleanup",
+      "working_directory": "/Users/simongu/fomc_surprise_flow_study",
+      "steps": [
+        {
+          "step_id": "audit",
+          "timeout_seconds": 1200,
+          "prompt": "You are an auditor (critic/verifier). Read-only: do NOT modify any files, do NOT regenerate outputs in-place, do NOT run destructive commands.\n\nGOAL: Audit the project against the stated goal/spec. Focus only on your assigned scope (2\u20133 checks) to avoid attention dilution.\n\nEVIDENCE REQUIREMENT:\n- Support each finding with concrete evidence: a file path (+ line reference if relevant) and/or a minimal command that could reproduce the observation.\n- Do not paste long logs; summarize and reference artifact paths instead.\n\nOUTPUT REQUIREMENT (STRICT):\n- Output valid **Run Report JSON only**, conforming to the ParallelHassnes Run Report schema (schema_version=1.0.0).\n- files_written must be [].\n- In the `summary` field, END WITH EXACTLY these 3 lines (verbatim prefixes; use \"none\" if not applicable):\n  PROMPT_AMBIGUITY: ...\n  MISSING_INPUT: ...\n  PROMPT_DELTA: ...\n- Do NOT add any other lines starting with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA beyond those 3.\n\nYou are an auditor. Read-only.\n\nGOAL: Identify lingering dead references or confusing leftovers that could hurt future use.\nSCOPE: unused raw files (e.g., old ACM FRED series), stale comments/labels, inconsistent variable naming that could mislead users.\nINPUT: run_analysis.py; data/raw/; outputs/.\nDONE: Provide a short list of the highest-priority cleanup items (no code changes), with evidence.\n\nOUTPUT: Run Report JSON only; include PROMPT_* lines.\n"
+        }
+      ]
+    }
+  ]
+}

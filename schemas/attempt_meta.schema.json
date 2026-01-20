@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ParallelHassnes Run Attempt meta.json",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["batch_id", "job_id", "step_id", "run_id", "runner_id", "invocation", "prompt_sha256", "codex_cli_version"],
+  "properties": {
+    "batch_id": { "type": "string" },
+    "job_id": { "type": "string" },
+    "step_id": { "type": "string" },
+    "run_id": { "type": "string" },
+    "runner_id": { "type": "string" },
+    "codex_thread_id": { "type": "string" },
+    "invocation": { "type": "string", "enum": ["exec", "resume"] },
+    "parent_run_id": { "type": "string" },
+    "resume_from": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "step_id": { "type": "string" },
+        "selector": { "type": "string" },
+        "resolved_source_run_id": { "type": "string" }
+      }
+    },
+    "resume_base_copied_from": { "type": "string" },
+    "prompt_ref": { "type": "string" },
+    "prompt_sha256": { "type": "string" },
+    "policy_snapshot": { "type": "object", "additionalProperties": true },
+    "environment_snapshot": { "type": "object", "additionalProperties": true },
+    "codex_cli_version": { "type": "string" }
+  }
+}
+
