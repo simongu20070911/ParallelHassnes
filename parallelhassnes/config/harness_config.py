@@ -76,6 +76,7 @@ class HarnessConfig:
                 "runner_capacity": 1,
                 "runner_pool": {"shared_filesystem": True, "runner_ids": [], "resume_base_transfer_enabled": False},
                 "runner_affinity": {"resume_steps": "pin_resume_source", "non_resume_steps": "none"},
+                "scheduler": {"multi_batch": True},
                 "retention_policy": {
                     "keep_raw_events_days": 30,
                     "keep_git_artifacts_days": 7,

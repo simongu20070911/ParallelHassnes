@@ -20,6 +20,9 @@ class RunnerPool:
         self._runners = {r.runner_id: r for r in runners}
         self._order = sorted(self._runners.keys())
 
+    def total_capacity(self) -> int:
+        return sum(int(h.capacity) for h in self._runners.values())
+
     def has_runner(self, runner_id: str) -> bool:
         return runner_id in self._runners
 

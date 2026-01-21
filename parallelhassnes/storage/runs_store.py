@@ -209,9 +209,10 @@ class RunsStore:
         except Exception:
             return None
 
-    def build_scheduler(self, cfg: dict[str, Any], concurrency_override: int | None) -> Scheduler:
+    def build_scheduler(self, cfg: dict[str, Any], concurrency_override: int | None, *, multi_batch: bool = False) -> Scheduler:
         scfg = SchedulerConfig(
             concurrency_override=concurrency_override,
+            multi_batch=bool(multi_batch),
         )
         return Scheduler(store=self, cfg=scfg, harness_cfg=cfg)
 

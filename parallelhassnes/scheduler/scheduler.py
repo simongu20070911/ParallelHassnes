@@ -14,6 +14,7 @@ from parallelhassnes.workspace.policy import WorkspaceResolution, resolve_job_wo
 @dataclass(frozen=True)
 class SchedulerConfig:
     concurrency_override: int | None
+    multi_batch: bool = False
 
 
 class Scheduler:
@@ -28,8 +29,315 @@ class Scheduler:
         batches.update(ingested_batches)
         if isinstance(batch_id_filter, str) and batch_id_filter.strip():
             batches = {batch_id_filter.strip()} if batch_id_filter.strip() in batches else set()
-        for batch_id in sorted(batches):
-            self._run_batch_until_idle(batch_id, runner_pool)
+        batch_list = sorted(batches)
+        if self._cfg.multi_batch:
+            self._run_multi_batch_until_idle(batch_list, runner_pool)
+        else:
+            for batch_id in batch_list:
+                self._run_batch_until_idle(batch_id, runner_pool)
+
+    def _run_multi_batch_until_idle(self, batch_ids: list[str], runner_pool: Any) -> None:
+        """
+        Multi-batch scheduler: interleave runnable steps across batches so that
+        independent batches can make progress concurrently under shared runner capacity.
+        """
+        from collections import deque
+
+        per_workdir_limits = (self._hcfg.get("limits", {}) or {}).get("per_workdir_concurrency") or {}
+        if not isinstance(per_workdir_limits, dict):
+            per_workdir_limits = {}
+
+        workdir_inflight: dict[str, int] = {}
+
+        @dataclass
+        class _BatchState:
+            batch_id: str
+            batch: dict[str, Any]
+            concurrency: int
+            shared_fs: bool
+            transfer_enabled: bool
+            runner_affinity_cfg: dict[str, Any]
+            job_defs: list[tuple[str, dict[str, Any], WorkspaceResolution]]
+            job_by_id: dict[str, tuple[dict[str, Any], WorkspaceResolution]]
+            step_by_key: dict[tuple[str, str], dict[str, Any]]
+            runnable_q: deque[tuple[str, str]]
+            queued: set[tuple[str, str]]
+            started_steps: set[tuple[str, str]]
+            job_cursor: int
+            state_path: Path
+            in_flight: set[Future[None]]
+            future_to_step_lock: dict[Future[None], FileLock]
+            future_to_workdir: dict[Future[None], str]
+
+            def write_state(self) -> None:
+                write_atomic_json(
+                    self.state_path,
+                    {
+                        "batch_id": self.batch_id,
+                        "updated_at": utc_isoformat(),
+                        "queue": [{"job_id": jid, "step_id": sid} for (jid, sid) in list(self.runnable_q)],
+                        "in_flight": len(self.in_flight),
+                        "note": "Best-effort scheduler snapshot; source of truth remains attempt dirs + current.json.",
+                    },
+                )
+
+            def enqueue(self, job_id: str, step_id: str) -> None:
+                k = (job_id, step_id)
+                if k in self.queued or k in self.started_steps:
+                    return
+                self.runnable_q.append(k)
+                self.queued.add(k)
+
+            def restore_queue_snapshot(self) -> None:
+                if not self.state_path.exists():
+                    return
+                try:
+                    import json
+
+                    raw = json.loads(self.state_path.read_text(encoding="utf-8"))
+                    q = raw.get("queue") if isinstance(raw, dict) else None
+                    if isinstance(q, list):
+                        for ent in q:
+                            if not isinstance(ent, dict):
+                                continue
+                            jid = ent.get("job_id")
+                            sid = ent.get("step_id")
+                            if isinstance(jid, str) and isinstance(sid, str) and (jid, sid) in self.step_by_key:
+                                self.enqueue(jid, sid)
+                except Exception:
+                    return
+
+            def refresh_queue(self, store: Any) -> None:
+                if not self.job_defs:
+                    return
+                n = len(self.job_defs)
+                for off in range(n):
+                    jidx = (self.job_cursor + off) % n
+                    job_id, job, _workspace = self.job_defs[jidx]
+                    current = store.read_current(self.batch_id, job_id) or _empty_current(self.batch_id, job_id)
+                    overrides = store.read_overrides(self.batch_id, job_id)
+                    for step in job.get("steps", []):
+                        step_id = step.get("step_id")
+                        if not isinstance(step_id, str) or not step_id:
+                            continue
+                        if (job_id, step_id) in self.started_steps:
+                            continue
+                        if _forced_terminal(current, overrides, step_id):
+                            _apply_forced_terminal_marker(store, current, self.batch_id, job_id, step_id, overrides)
+                            continue
+                        if _step_succeeded(current, step_id) and not _force_retry_requested(current, overrides, step_id):
+                            continue
+                        if _step_running(store, current, step_id):
+                            continue
+                        if not _retry_allowed(self.batch, current, step, overrides):
+                            continue
+                        if not _deps_satisfied(store, self.batch_id, job_id, current, step, job.get("steps", [])):
+                            continue
+                        self.enqueue(job_id, step_id)
+                self.job_cursor = (self.job_cursor + 1) % n
+
+        batch_states: list[_BatchState] = []
+        for batch_id in batch_ids:
+            # Operator control: a closed batch is finalized and should not accept new scheduling.
+            if (self._store.paths.batch_dir(batch_id) / "batch_closed.json").exists():
+                continue
+            batch = self._store.read_batch_meta(batch_id)
+            concurrency = int(self._cfg.concurrency_override or batch.get("concurrency") or 1)
+            if concurrency <= 0:
+                concurrency = 1
+
+            defaults = batch.get("effective_defaults", {}) or {}
+            runner_pool_cfg = defaults.get("runner_pool") or (self._hcfg.get("defaults", {}) or {}).get("runner_pool") or {}
+            shared_fs = bool(runner_pool_cfg.get("shared_filesystem", True))
+            transfer_enabled = bool(runner_pool_cfg.get("resume_base_transfer_enabled", False))
+            runner_affinity_cfg = defaults.get("runner_affinity") or (self._hcfg.get("defaults", {}) or {}).get("runner_affinity") or {}
+
+            job_defs: list[tuple[str, dict[str, Any], WorkspaceResolution]] = []
+            job_by_id: dict[str, tuple[dict[str, Any], WorkspaceResolution]] = {}
+            step_by_key: dict[tuple[str, str], dict[str, Any]] = {}
+            for job in batch["jobs"]:
+                job_id = job["job_id"]
+                workspace = resolve_job_workdir(paths=self._store.paths, harness_cfg=self._hcfg, batch=batch, job=job)
+                job_defs.append((job_id, job, workspace))
+                job_by_id[job_id] = (job, workspace)
+                for step in job.get("steps", []):
+                    step_id = step.get("step_id")
+                    if isinstance(step_id, str) and step_id:
+                        step_by_key[(job_id, step_id)] = step
+
+            bs = _BatchState(
+                batch_id=batch_id,
+                batch=batch,
+                concurrency=concurrency,
+                shared_fs=shared_fs,
+                transfer_enabled=transfer_enabled,
+                runner_affinity_cfg=runner_affinity_cfg if isinstance(runner_affinity_cfg, dict) else {},
+                job_defs=job_defs,
+                job_by_id=job_by_id,
+                step_by_key=step_by_key,
+                runnable_q=deque(),
+                queued=set(),
+                started_steps=set(),
+                job_cursor=0,
+                state_path=self._store.paths.batch_scheduler_state_path(batch_id),
+                in_flight=set(),
+                future_to_step_lock={},
+                future_to_workdir={},
+            )
+            bs.restore_queue_snapshot()
+            bs.refresh_queue(self._store)
+            bs.write_state()
+            batch_states.append(bs)
+
+        # Run steps across all batches using a single worker pool to avoid thread explosion.
+        try:
+            total_cap = max(1, int(runner_pool.total_capacity()))
+        except Exception:
+            try:
+                total_cap = max(1, len(runner_pool.runner_ids()))
+            except Exception:
+                total_cap = 1
+
+        all_in_flight: set[Future[None]] = set()
+        future_to_batch: dict[Future[None], _BatchState] = {}
+
+        def _dispatch_from_batch(ex: ThreadPoolExecutor, bs: _BatchState) -> bool:
+            if not bs.runnable_q:
+                bs.refresh_queue(self._store)
+                if not bs.runnable_q:
+                    return False
+            made_progress = False
+            attempts_without_schedule = 0
+            max_attempts = len(bs.runnable_q) if bs.runnable_q else 0
+            while bs.runnable_q and len(bs.in_flight) < bs.concurrency and (max_attempts == 0 or attempts_without_schedule < max_attempts):
+                job_id, step_id = bs.runnable_q.popleft()
+                bs.queued.discard((job_id, step_id))
+                attempts_without_schedule += 1
+
+                if (job_id, step_id) in bs.started_steps:
+                    continue
+
+                jw = bs.job_by_id.get(job_id)
+                if jw is None:
+                    continue
+                job, workspace = jw
+                step = bs.step_by_key.get((job_id, step_id))
+                if not isinstance(step, dict):
+                    continue
+
+                current = self._store.read_current(bs.batch_id, job_id) or _empty_current(bs.batch_id, job_id)
+                overrides = self._store.read_overrides(bs.batch_id, job_id)
+                job_workdir = workspace.job_workdir
+
+                if _forced_terminal(current, overrides, step_id):
+                    _apply_forced_terminal_marker(self._store, current, bs.batch_id, job_id, step_id, overrides)
+                    continue
+                if _step_succeeded(current, step_id) and not _force_retry_requested(current, overrides, step_id):
+                    continue
+                if _step_running(self._store, current, step_id):
+                    continue
+                if not _retry_allowed(bs.batch, current, step, overrides):
+                    continue
+                if not _deps_satisfied(self._store, bs.batch_id, job_id, current, step, job.get("steps", [])):
+                    continue
+
+                step_lock_path = self._store.paths.step_dir(bs.batch_id, job_id, step_id) / "step.lock"
+                step_lock = try_acquire_lock(step_lock_path)
+                if step_lock is None:
+                    bs.enqueue(job_id, step_id)
+                    continue
+
+                if per_workdir_limits:
+                    lim = per_workdir_limits.get(job_workdir)
+                    if isinstance(lim, int) and lim > 0:
+                        if workdir_inflight.get(job_workdir, 0) >= lim:
+                            step_lock.release()
+                            bs.enqueue(job_id, step_id)
+                            continue
+
+                desired, avoid, requeue_nonce = _resolve_runner_choice(
+                    self._store,
+                    bs.batch_id,
+                    job_id,
+                    current,
+                    step,
+                    runner_pool,
+                    overrides,
+                    bs.runner_affinity_cfg,
+                    shared_fs=bs.shared_fs,
+                    transfer_enabled=bs.transfer_enabled,
+                )
+                acquired = runner_pool.try_acquire_any(desired, avoid=avoid)
+                if acquired is None:
+                    step_lock.release()
+                    bs.enqueue(job_id, step_id)
+                    continue
+                runner_id = acquired
+
+                if _force_retry_requested(current, overrides, step_id):
+                    _mark_force_retry_applied(self._store, current, bs.batch_id, job_id, step_id, overrides)
+
+                if requeue_nonce is not None:
+                    _mark_requeue_applied(self._store, current, bs.batch_id, job_id, step_id, overrides, requeue_nonce)
+
+                fut = ex.submit(_run_step_on_pool, runner_pool, runner_id, bs.batch, job, step, workspace, current)
+                fut.add_done_callback(lambda f, rid=runner_id: runner_pool.release(rid))
+                bs.in_flight.add(fut)
+                bs.future_to_step_lock[fut] = step_lock
+                if per_workdir_limits and job_workdir in per_workdir_limits:
+                    bs.future_to_workdir[fut] = job_workdir
+                    workdir_inflight[job_workdir] = workdir_inflight.get(job_workdir, 0) + 1
+                bs.started_steps.add((job_id, step_id))
+
+                all_in_flight.add(fut)
+                future_to_batch[fut] = bs
+                made_progress = True
+                bs.write_state()
+
+            return made_progress
+
+        with ThreadPoolExecutor(max_workers=total_cap) as ex:
+            while True:
+                made_progress = False
+
+                for bs in batch_states:
+                    made_progress = _dispatch_from_batch(ex, bs) or made_progress
+
+                done, _ = wait(all_in_flight, timeout=0.05)
+                if done:
+                    made_progress = True
+                for f in done:
+                    all_in_flight.discard(f)
+                    bs = future_to_batch.pop(f, None)
+                    if bs is None:
+                        continue
+                    bs.in_flight.discard(f)
+                    wd = bs.future_to_workdir.pop(f, None)
+                    if wd is not None:
+                        cur = workdir_inflight.get(wd, 0) - 1
+                        if cur <= 0:
+                            workdir_inflight.pop(wd, None)
+                        else:
+                            workdir_inflight[wd] = cur
+                    lk = bs.future_to_step_lock.pop(f, None)
+                    if lk is not None:
+                        lk.release()
+                    bs.refresh_queue(self._store)
+                    bs.write_state()
+
+                if all_in_flight:
+                    continue
+
+                # No futures running: only continue if new runnable work appears.
+                if not made_progress:
+                    any_runnable = False
+                    for bs in batch_states:
+                        bs.refresh_queue(self._store)
+                        bs.write_state()
+                        if bs.runnable_q:
+                            any_runnable = True
+                    if not any_runnable:
+                        break
 
     def _run_batch_until_idle(self, batch_id: str, runner_pool: Any) -> None:
         # Operator control: a closed batch is finalized and should not accept new scheduling.

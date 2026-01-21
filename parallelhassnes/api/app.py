@@ -88,6 +88,10 @@ def create_app(
             interval_f = 0.05
         return (enabled and auto_tick), interval_f
 
+    def _multi_batch_from_cfg(cfg: dict[str, Any]) -> bool:
+        dv = ((cfg.get("defaults", {}) or {}).get("scheduler") or {}) if isinstance(cfg, dict) else {}
+        return bool(dv.get("multi_batch", False)) if isinstance(dv, dict) else False
+
     def _enforce(request: Request) -> None:
         cfg = _read_cfg()
         auth = _auth_from_cfg(cfg)
@@ -120,7 +124,10 @@ def create_app(
         if not enabled:
             return
         # Use the same lock for background and on-demand tick calls.
-        tick_loop = TickLoop(harness, TickLoopConfig(interval_seconds=interval, concurrency_override=None, use_fake_invoker=False))
+        tick_loop = TickLoop(
+            harness,
+            TickLoopConfig(interval_seconds=interval, concurrency_override=None, use_fake_invoker=False, multi_batch=_multi_batch_from_cfg(cfg)),
+        )
         tick_thread = threading.Thread(target=lambda: tick_loop.run_forever(on_error=None), daemon=True)
         tick_thread.start()
 
@@ -133,13 +140,13 @@ def create_app(
             tick_thread.join(timeout=1)
 
     @app.post("/v1/tick")
-    def tick(request: Request, concurrency: int | None = None, no_codex: bool = False) -> dict[str, Any]:
+    def tick(request: Request, concurrency: int | None = None, no_codex: bool = False, multi_batch: bool | None = None) -> dict[str, Any]:
         _enforce(request)
         # Share the same tick serialization mutex when auto-tick is enabled.
         if tick_loop is not None:
-            tick_loop.tick_once_with_overrides(concurrency_override=concurrency, use_fake_invoker=bool(no_codex))
+            tick_loop.tick_once_with_overrides(concurrency_override=concurrency, use_fake_invoker=bool(no_codex), multi_batch=multi_batch)
         else:
-            harness.tick_once(concurrency_override=concurrency, use_fake_invoker=bool(no_codex))
+            harness.tick_once(concurrency_override=concurrency, use_fake_invoker=bool(no_codex), multi_batch=multi_batch)
         return {"ok": True}
 
     @app.post("/v1/batches")

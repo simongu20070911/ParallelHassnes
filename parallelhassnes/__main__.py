@@ -63,6 +63,12 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         default=None,
         help="If provided, run scheduling only for this batch_id (still ingests filesystem queue first).",
     )
+    p_once.add_argument(
+        "--multi-batch",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Interleave runnable steps across batches (default: from harness_config.json).",
+    )
 
     p_sb = sub.add_parser("scoreboard", help="Compute scoreboards from on-disk state")
     p_sb.add_argument("--root", default=str(Path.cwd()), help="Project root (default: cwd)")
@@ -182,6 +188,12 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
         action="store_true",
         help="Do not spawn Codex; use a deterministic fake invoker (for local dry runs/tests)",
     )
+    p_serve.add_argument(
+        "--multi-batch",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Interleave runnable steps across batches (default: from harness_config.json).",
+    )
 
     return parser.parse_args(argv)
 
@@ -261,6 +273,7 @@ def main(argv: list[str] | None = None) -> int:
                 interval_seconds=float(getattr(args, "interval_seconds", 0.5)),
                 concurrency_override=int(getattr(args, "concurrency")) if getattr(args, "concurrency", None) is not None else None,
                 use_fake_invoker=bool(getattr(args, "no_codex", False)),
+                multi_batch=getattr(args, "multi_batch", None),
             ),
         )
         try:
@@ -413,6 +426,7 @@ def main(argv: list[str] | None = None) -> int:
             concurrency_override=getattr(args, "concurrency", None),
             use_fake_invoker=bool(getattr(args, "no_codex", False)),
             batch_id_filter=getattr(args, "batch_id", None),
+            multi_batch=getattr(args, "multi_batch", None),
         )
         return 0
 

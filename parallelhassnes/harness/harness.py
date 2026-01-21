@@ -29,7 +29,14 @@ class Harness:
     def _paths(self) -> Paths:
         return Paths(runs_root=self.runs_root, runners_root=self.runners_root)
 
-    def tick_once(self, concurrency_override: int | None, use_fake_invoker: bool, batch_id_filter: str | None = None) -> None:
+    def tick_once(
+        self,
+        concurrency_override: int | None,
+        use_fake_invoker: bool,
+        batch_id_filter: str | None = None,
+        *,
+        multi_batch: bool | None = None,
+    ) -> None:
         store = RunsStore(self._paths())
         cfg_path = self._paths().harness_config_path()
         if not cfg_path.exists():
@@ -70,7 +77,11 @@ class Harness:
         queue = FsQueue(self.queue_root)
         ingested = queue.ingest_all(store)
 
-        scheduler = store.build_scheduler(cfg, concurrency_override=concurrency_override)
+        mb = multi_batch
+        if mb is None:
+            dv = ((cfg.get("defaults", {}) or {}).get("scheduler") or {}) if isinstance(cfg, dict) else {}
+            mb = bool(dv.get("multi_batch", False)) if isinstance(dv, dict) else False
+        scheduler = store.build_scheduler(cfg, concurrency_override=concurrency_override, multi_batch=bool(mb))
         runner_ids = _runner_ids_from_env_or_config(cfg)
         pool = store.build_runner_pool(cfg, use_fake_invoker=use_fake_invoker, runner_ids=runner_ids)
         scheduler.run_until_idle(ingested_batches=ingested, runner_pool=pool, batch_id_filter=batch_id_filter)

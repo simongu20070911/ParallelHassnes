@@ -11,6 +11,7 @@ class TickLoopConfig:
     interval_seconds: float
     concurrency_override: int | None
     use_fake_invoker: bool
+    multi_batch: bool | None = None
 
 
 class TickLoop:
@@ -35,12 +36,13 @@ class TickLoop:
         self.tick_once_with_overrides(
             concurrency_override=self._cfg.concurrency_override,
             use_fake_invoker=self._cfg.use_fake_invoker,
+            multi_batch=self._cfg.multi_batch,
         )
 
-    def tick_once_with_overrides(self, *, concurrency_override: int | None, use_fake_invoker: bool) -> None:
+    def tick_once_with_overrides(self, *, concurrency_override: int | None, use_fake_invoker: bool, multi_batch: bool | None = None) -> None:
         # Serialize ticks: avoids concurrent scheduler/runners in the same process.
         with self._tick_mu:
-            self._harness.tick_once(concurrency_override=concurrency_override, use_fake_invoker=use_fake_invoker)
+            self._harness.tick_once(concurrency_override=concurrency_override, use_fake_invoker=use_fake_invoker, multi_batch=multi_batch)
 
     def run_forever(self, *, on_error: Callable[[BaseException], None] | None = None) -> None:
         interval = float(self._cfg.interval_seconds)
