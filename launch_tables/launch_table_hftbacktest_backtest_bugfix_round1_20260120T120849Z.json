@@ -1,0 +1,74 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+  "batch_goal_summary": "This batch applies targeted fixes to high-impact logical correctness bugs in the Rust research/backtest engine under /Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest. The objective is to eliminate correctness landmines that can silently invalidate research conclusions: incorrect best-bid/ask after depth clears; depth update functions that violate the L2MarketDepth contract (returning the wrong prev_qty and corrupting downstream queue/fill logic); partial-fill accounting inconsistencies where the exchange-side processor applies fills but the local state does not, producing wrong position/balance/fees during the run; rejected modify/cancel rollback bugs where local order fields can remain changed even though the request was rejected; and data ingestion robustness problems where malformed or truncated .npy/.npz inputs can hang, panic, or be misinterpreted. Scope is strictly backtest/research logic: hftbacktest/src/backtest/**, hftbacktest/src/depth/**, and closely-related shared types used by those paths. Explicitly exclude: examples/, live/, connector/, collector/, py-hftbacktest/. Shared workspace only: no isolated worktrees, no branching workflows, and do not commit. Keep diffs minimal and surgical. Every job must add a deterministic regression test that would have failed before the fix, run `cargo test -p hftbacktest --lib` with a job-specific CARGO_TARGET_DIR, and report what changed, what invariant is being enforced, and any follow-up risks or TODOs.",
+  "concurrency": 1,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "workspace-write",
+    "skip_git_repo_check": false,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 7200 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "fix_01_depth_clear_bugs",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 5400,
+          "prompt": "Fix job 1/5: Depth clear/BBO correctness\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal: Fix confirmed logical bugs in depth clear handling that can produce invalid best-bid/ask and break marketability.\n\nTargets:\n1) `HashMapMarketDepth::clear_depth` off-by-one best recomputation after finite clears.\n   - File: `hftbacktest/src/depth/hashmapmarketdepth.rs`.\n2) `ROIVectorMarketDepth::clear_depth` ask-side indexing bug (`roi_ub` used in index math) and any associated off-by-one behavior.\n   - File: `hftbacktest/src/depth/roivectormarketdepth.rs`.\n\nRequirements:\n- Implement minimal fix (no refactors).\n- Add regression tests that would fail before and pass after. Keep tests small and deterministic.\n- Run: `CARGO_TARGET_DIR=.ph_target/fix_01 cargo test -p hftbacktest --lib`.\n- Do not change unrelated formatting.\n\nOutput: Run Report JSON only (schema_version=1.0.0), summarizing patches + tests run + result."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_02_btree_depth_contracts",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 5400,
+          "prompt": "Fix job 2/5: BTreeMarketDepth contract violations\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal: Fix confirmed logical bugs in `BTreeMarketDepth` that violate trait semantics and can bias queue/fill logic.\n\nTargets:\n1) L2 `prev_qty` semantics: `update_bid_depth`/`update_ask_depth` must return previous qty at `price_tick`, not previous BEST level qty.\n   - File: `hftbacktest/src/depth/btreemarketdepth.rs`.\n2) L3 delete recompute: bid-side best recomputation uses min key; should use max key.\n   - File: `hftbacktest/src/depth/btreemarketdepth.rs`.\n\nRequirements:\n- Implement minimal fix.\n- Add regression tests.\n- Run: `CARGO_TARGET_DIR=.ph_target/fix_02 cargo test -p hftbacktest --lib`.\n\nOutput: Run Report JSON only (schema_version=1.0.0)."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_03_partialfill_accounting_and_rejects",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "Fix job 3/5: PartialFillExchange accounting + rejected modify rollback\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal: Fix internally inconsistent order/accounting behavior that can invalidate PnL/position during backtests.\n\nConfirmed problems:\nA) Local accounting only applies fills when `order.status == Status::Filled`, but `PartialFillExchange` emits `Status::PartiallyFilled` with `exec_qty` and also can execute multiple legs at order-accept time without emitting per-leg responses.\n   - Local: `hftbacktest/src/backtest/proc/local.rs`\n   - L3 local: `hftbacktest/src/backtest/proc/l3_local.rs`\n   - Exchange: `hftbacktest/src/backtest/proc/partialfillexchange.rs`\nB) Rejected modify rollback: local skips `local_order.update(&order)` on `Rejected`, so modified fields can remain after rejection.\n   - Local: `hftbacktest/src/backtest/proc/local.rs`\n   - L3 local: `hftbacktest/src/backtest/proc/l3_local.rs`\n\nRequirements (design constraints):\n- Make local accounting correct for partial fills: apply fills whenever a response carries a *new* execution (`exec_qty > 0`), not only on `Status::Filled`.\n- Prevent double-counting from stale `exec_qty` fields: ensure order *requests* sent from local to exchange always have `exec_qty=0` (and preferably `exec_price_tick=0`, `maker=false`) so non-fill acks/rejections never accidentally look like fills.\n- For aggressive multi-level executions in `PartialFillExchange::ack_new`, ensure the local can account all executions (either by emitting per-fill responses, or by another sound mechanism). Avoid sending a final response that causes double counting.\n- Fix rejected modify rollback so local order fields reflect the rejection’s reverted values.\n\nTests (must add):\n1) A regression test that submits a marketable limit order that executes across 2+ price levels on acceptance under `ExchangeKind::PartialFillExchange` and asserts local `StateValues.position` and `balance` match the sum of all legs.\n2) A regression test that forces a modify request rejection (via a custom LatencyModel in the test) and asserts local order price/qty are rolled back after the rejection is processed.\n\nRun:\n- `CARGO_TARGET_DIR=.ph_target/fix_03 cargo test -p hftbacktest --lib`.\n\nOutput: Run Report JSON only (schema_version=1.0.0)."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_04_npy_reader_robustness",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "Fix job 4/5: .npy/.npz reader robustness (no hang/panic, no silent truncation)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal: Fix confirmed robustness issues that can hang/panic a long backtest or silently accept malformed schemas.\n\nTargets:\n1) `read_npy` can spin forever on `read()==0` and can panic due to unchecked slices/unwraps.\n   - File: `hftbacktest/src/backtest/data/npy/mod.rs`.\n2) Field-count mismatch is silently ignored (`zip()` truncation).\n   - File: `hftbacktest/src/backtest/data/npy/mod.rs`.\n3) Missing required header keys (`descr`, `fortran_order`, `shape`) should be rejected (avoid accepting empty `descr`).\n   - File: `hftbacktest/src/backtest/data/npy/mod.rs`.\n4) `Data::is_empty()` should reflect logical record count, not raw buffer length.\n   - File: `hftbacktest/src/backtest/data/mod.rs`.\n5) Reject empty inputs early instead of panicking via `DataPtr::new(0)`.\n   - Files: `hftbacktest/src/backtest/data/npy/mod.rs`, `hftbacktest/src/backtest/data/mod.rs` as needed.\n\nRequirements:\n- Replace infinite read loop with correct EOF handling (treat premature EOF as error).\n- Add bounds checks for header length vs file size.\n- Replace `unwrap()`s in the `.npy` read path with proper `InvalidData` errors.\n- Tighten dtype/schema checks at least to the point of rejecting field-count mismatches.\n- Add unit tests for malformed/truncated inputs that previously would hang/panic.\n\nRun:\n- `CARGO_TARGET_DIR=.ph_target/fix_04 cargo test -p hftbacktest --lib`.\n\nOutput: Run Report JSON only (schema_version=1.0.0)."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_05_timestamp_overflow_checks",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 5400,
+          "prompt": "Fix job 5/5: Timestamp overflow safety\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal: Prevent silent i64 overflow/wrap in timestamp adjustments.\n\nTargets:\n1) Feed latency adjustment uses `local_ts += offset` without overflow checking.\n   - File: `hftbacktest/src/backtest/data/reader.rs`.\n2) Order latency adjustment uses unchecked additions.\n   - File: `hftbacktest/src/backtest/models/latency.rs`.\n\nRequirements:\n- Use checked arithmetic (`checked_add` / `checked_sub`) and return `InvalidData` on overflow.\n- Add unit tests demonstrating overflow is detected.\n- Run: `CARGO_TARGET_DIR=.ph_target/fix_05 cargo test -p hftbacktest --lib`.\n\nOutput: Run Report JSON only (schema_version=1.0.0)."
+        }
+      ]
+    }
+  ]
+}

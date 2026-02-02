@@ -1,0 +1,85 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+  "batch_goal_summary": "Run a 6-agent, x-high reasoning, read-only, reachability-gated audit of the **L3 (market-by-order) backtest path** in `hftbacktest` under the *actual* CME Globex + Databento GLBX.MDP3/mbo conversion contract. The goal is to find bugs that materially distort results (fills/PnL, causality/lookahead, conservation, determinism/price-time priority) and to avoid false positives by grounding every claim in (1) the stated execution stack, (2) the stated converter/validator pipeline, and (3) measured dataset reality stats. World model (frozen): venue=CME Globex; data=Databento DBN zst schema=GLBX.MDP3/mbo; conversion pipeline=`py-hftbacktest/hftbacktest/data/utils/databento.py` (convert maps actions A/C/M/R/T/F to events, sets `exch_ts=ts_event`, `local_ts=ts_recv`, then runs `correct_local_timestamp -> correct_event_order -> validate_event_order`); default Rust config: L3AssetBuilder with `ExchangeKind::NoPartialFillExchange` (L3 partial fill is unimplemented), queue model = `L3FIFOQueueModel`, local processor = `L3Local`, and `latency_offset=0`, `order_bus_max_timestamp_reordering=0` (strict FIFO/clamp). Data reality snapshot (must be used to gate reachability): `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.inventory.json`, `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.stats.json`, and the extracted timeline `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/order_id_6416199000000_timeline.csv`. Each agent owns a distinct vertical slice covering the full L3 area: exchange processor semantics, FIFO queue model semantics, local order state machine, L3 market depth invariants, scheduler/time ordering & latency/order-bus causality, and the Databento conversion/contract layer. Hard constraints: no cargo/tests, no file edits, no web; do not speculate about reachability—every S0/S1 claim must include a concrete call-chain and a 2–8 event minimal repro consistent with the data snapshot. Final output must be a harness Run Report JSON, with a machine-extractable issue list embedded inside the `summary` field between `BEGIN_ISSUES_JSON`/`END_ISSUES_JSON`, and must end with `PROMPT_AMBIGUITY`/`MISSING_INPUT`/`PROMPT_DELTA` lines.",
+  "concurrency": 6,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "read-only",
+    "skip_git_repo_check": false,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 10800 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "l3_01_exchange_processor_semantics",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 1/6. Think **x-high**.\n\nCommon constraints (non-negotiable): read-only, no cargo/tests, no web.\nGoal: find ONLY issues that matter under the frozen world model and are reachable under the stated pipeline.\nOutput: final response must be a harness Run Report JSON; embed a machine-extractable issue list inside `summary` between BEGIN_ISSUES_JSON / END_ISSUES_JSON. End with PROMPT_AMBIGUITY/MISSING_INPUT/PROMPT_DELTA lines.\n\nFrozen world model + gating inputs:\n- Repo: `/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest` @ commit `0d5af4d070e523820cb4efbf79f4bc462d3aed5a`.\n- Scope: L3 only.\n- Stack (default): `L3AssetBuilder` → `L3Local` + `L3NoPartialFillExchange` + `L3FIFOQueueModel`.\n- Conversion pipeline (must check for \"false positives\"): `py-hftbacktest/hftbacktest/data/utils/databento.py` convert → `correct_local_timestamp` → `correct_event_order` → `validate_event_order`.\n- Data reality snapshot (must gate reachability):\n  - `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.inventory.json`\n  - `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.stats.json`\n  - `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/order_id_6416199000000_timeline.csv`\n\nScope (strict): `hftbacktest/src/backtest/proc/l3_nopartialfillexchange.rs` plus any required glue in `hftbacktest/src/backtest/mod.rs` / `hftbacktest/src/backtest/proc/mod.rs`.\n\nWhat to hunt (high signal only):\n- Event semantics mismatches for Databento MBO (A/M/C/F/T/R) and how they mutate depth/queue.\n- Conservation/correctness: any place the exchange creates/destroys qty, mishandles partial fills, ignores execution size, or applies fills that cannot be justified under the data snapshot.\n- Order lifecycle: cancel/modify rejects and terminal status semantics (zombies), replace semantics, queue position resets.\n- Determinism/priority: any path where iteration order can change fill/response order.\n- Causality: any path that can deliver exchange responses before exchange events under default config.\n\nHard requirement per issue (no exceptions): claim, type, severity (S0–S3), reachability class, file:line evidence, call-chain, 2–8 event minimal repro consistent with snapshot, impact (PnL/lookahead/nondet), and a false-positive check that explicitly references the converter/validator and/or snapshot stats.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "l3_02_fifo_queue_model_physics",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 2/6. Think **x-high**.\n\nCommon constraints (non-negotiable): read-only, no cargo/tests, no web.\nOutput: final response must be a harness Run Report JSON; embed a machine-extractable issue list inside `summary` between BEGIN_ISSUES_JSON / END_ISSUES_JSON. End with PROMPT_AMBIGUITY/MISSING_INPUT/PROMPT_DELTA lines.\n\nFrozen world model + gating inputs:\n- Repo: `/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest` @ commit `0d5af4d070e523820cb4efbf79f4bc462d3aed5a`.\n- Scope: L3 only.\n- Stack (default): `L3AssetBuilder` → `L3Local` + `L3NoPartialFillExchange` + `L3FIFOQueueModel`.\n- Conversion pipeline: `py-hftbacktest/hftbacktest/data/utils/databento.py` convert → `correct_local_timestamp` → `correct_event_order` → `validate_event_order`.\n- Data reality snapshot (must gate reachability):\n  - `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.inventory.json`\n  - `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.stats.json`\n  - `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/order_id_6416199000000_timeline.csv`\n\nScope (strict): `hftbacktest/src/backtest/models/queue.rs` — `L3QueueModel` + `L3FIFOQueueModel` implementation.\n\nWhat to hunt (high signal only):\n- Price-time priority violations across ticks and within tick; nondeterminism via HashMap/HashSet iteration.\n- Conservation / execution-size accounting: any fill logic that can fill more than justified (especially under repeated partial `F` per order_id per snapshot stats).\n- Range semantics and best_* update handling: incorrect bounds, panics, unreachable asserts that are actually reachable.\n- Internal integrity: duplicate order_id handling that can desync `*_orders` maps vs queues (zombies), missing removals, state divergence.\n- Any behavior explicitly documented as a simplification: classify as MODEL_SIMPLIFICATION, but still rate severity if it biases results.\n\nHard requirement per issue: claim, type, severity, reachability class (using snapshot stats), file:line evidence, call-chain, 2–8 event minimal repro, impact, false-positive check, and minimal fix + regression test idea.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "l3_03_local_order_state_machine",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 3/6. Think **x-high**.\n\nCommon constraints (non-negotiable): read-only, no cargo/tests, no web.\nOutput: final response must be a harness Run Report JSON; embed a machine-extractable issue list inside `summary` between BEGIN_ISSUES_JSON / END_ISSUES_JSON. End with PROMPT_AMBIGUITY/MISSING_INPUT/PROMPT_DELTA lines.\n\nFrozen world model + gating inputs:\n- Repo: `/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest` @ commit `0d5af4d070e523820cb4efbf79f4bc462d3aed5a`.\n- Scope: L3 only.\n- Stack (default): `L3Local` + order buses (`hftbacktest/src/backtest/order.rs`) interacting with `L3NoPartialFillExchange`.\n- Conversion pipeline: `py-hftbacktest/hftbacktest/data/utils/databento.py` convert → `correct_local_timestamp` → `correct_event_order` → `validate_event_order`.\n- Data reality snapshot: `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.inventory.json` + `.../data_reality_snapshot.stats.json`.\n\nScope (strict): `hftbacktest/src/backtest/proc/l3_local.rs`, `hftbacktest/src/backtest/order.rs`, and `hftbacktest/src/types.rs` (Order state/update rules).\n\nWhat to hunt (high signal only):\n- Local/exchange divergence caused by pre-ack mutation (modify/cancel), reject handling, timestamp correlation mistakes (e.g., late rejects overwriting terminal status), and any path that creates zombie working orders.\n- Causality/time travel within the local order bus: negative/zero latency allowance, timestamp clamping, and whether any of these are reachable under default config.\n- Granularity: tick rounding/validation for L3 local order entry/replace.\n\nHard requirement per issue: claim, type, severity, reachability class, file:line evidence, call-chain, minimal repro (2–8 events/orders/messages), impact, false-positive check (explicitly reference pipeline/config), and minimal fix + regression test idea.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "l3_04_market_depth_invariants",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 4/6. Think **x-high**.\n\nCommon constraints (non-negotiable): read-only, no cargo/tests, no web.\nOutput: final response must be a harness Run Report JSON; embed a machine-extractable issue list inside `summary` between BEGIN_ISSUES_JSON / END_ISSUES_JSON. End with PROMPT_AMBIGUITY/MISSING_INPUT/PROMPT_DELTA lines.\n\nFrozen world model + gating inputs:\n- Repo: `/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest` @ commit `0d5af4d070e523820cb4efbf79f4bc462d3aed5a`.\n- Scope: L3 only.\n- Stack: `L3NoPartialFillExchange` mutates `L3MarketDepth` on add/modify/cancel/clear; queue model depends on `best_bid_tick/best_ask_tick`.\n- Data reality snapshot: `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.inventory.json` (note: sample shows no action 'R' in that file; use that to gate snapshot/clear claims).\n\nScope (strict): L3 depth correctness only.\nFiles: `hftbacktest/src/depth/mod.rs`, `hftbacktest/src/depth/hashmapmarketdepth.rs`, `hftbacktest/src/depth/btreemarketdepth.rs`, `hftbacktest/src/depth/roivectormarketdepth.rs`.\n\nWhat to hunt (high signal only):\n- Best bid/ask correctness under L3 adds/modifies/cancels and any staleness/invariant breaks that can cause wrong fills or panics.\n- Snapshot/clear interactions: whether apply_snapshot/clear can desync L3 orders vs depth, and whether this is reachable under the stated pipeline + dataset (use snapshot stats).\n- ROI-specific hazards (if ROIVector depth is used in typical configs): best outside ROI, stale best on delete, etc.\n\nHard requirement per issue: claim, type, severity, reachability class (grounded in snapshot stats), file:line evidence, call-chain, minimal repro, impact, false-positive check, and minimal fix + regression test idea.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "l3_05_scheduler_time_causality",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 5/6. Think **x-high**.\n\nCommon constraints (non-negotiable): read-only, no cargo/tests, no web.\nOutput: final response must be a harness Run Report JSON; embed a machine-extractable issue list inside `summary` between BEGIN_ISSUES_JSON / END_ISSUES_JSON. End with PROMPT_AMBIGUITY/MISSING_INPUT/PROMPT_DELTA lines.\n\nFrozen world model + gating inputs:\n- Repo: `/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest` @ commit `0d5af4d070e523820cb4efbf79f4bc462d3aed5a`.\n- Scope: L3 only.\n- Default config: `latency_offset=0` (no FeedLatencyAdjustment), `order_bus_max_timestamp_reordering=0` (strict FIFO/clamp), `ExchangeKind::NoPartialFillExchange`.\n- Conversion pipeline: `py-hftbacktest/hftbacktest/data/utils/databento.py` convert → `correct_local_timestamp` → `correct_event_order` → `validate_event_order`.\n- Data reality snapshot (must gate reachability): `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.inventory.json` + `.../data_reality_snapshot.stats.json`.\n\nScope (strict): time ordering + event dispatch + order bus ordering.\nFiles: `hftbacktest/src/backtest/mod.rs`, `hftbacktest/src/backtest/evs.rs`, `hftbacktest/src/backtest/data/reader.rs`, `hftbacktest/src/backtest/order.rs`.\n\nWhat to hunt (high signal only):\n- Any reachable lookahead / causality break, especially when timestamps tie or when streams are merged.\n- Missing validations that allow time to go backwards, BUT you must check whether `validate_event_order` already rejects it and whether the sample stats contradict the claim.\n- Same-timestamp tie-break rules (Local* vs Exch*) and whether they can violate causality under coarse timestamps; use the inventory’s tie counts.\n- Any config knob that allows time travel (timestamp reordering window, negative latency) and whether reachable under default config.\n\nHard requirement per issue: claim, type, severity, reachability class, file:line evidence, call-chain, minimal repro, impact, false-positive check (explicitly reference validator + inventory stats), and minimal fix + regression test idea.\n"
+        }
+      ]
+    },
+    {
+      "job_id": "l3_06_databento_pipeline_contract_layer",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 6/6. Think **x-high**.\n\nCommon constraints (non-negotiable): read-only, no cargo/tests, no web.\nOutput: final response must be a harness Run Report JSON; embed a machine-extractable issue list inside `summary` between BEGIN_ISSUES_JSON / END_ISSUES_JSON. End with PROMPT_AMBIGUITY/MISSING_INPUT/PROMPT_DELTA lines.\n\nYour slice is the Databento MBO → HftBacktest **conversion + contract** layer, and how it interacts with the Rust L3 engine.\n\nFrozen world model + gating inputs:\n- Repo: `/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest` @ commit `0d5af4d070e523820cb4efbf79f4bc462d3aed5a`.\n- Scope: L3 only, but you must inspect both Python and Rust where they meet.\n- Conversion pipeline (primary scope): `py-hftbacktest/hftbacktest/data/utils/databento.py` and `py-hftbacktest/hftbacktest/data/validation.py`.\n- Data reality snapshot:\n  - `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.inventory.json`\n  - `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/data_reality_snapshot.stats.json`\n  - `/Users/simongu/Desktop/cme_mbo_l3_bug_hunt_bundle/data/order_id_6416199000000_timeline.csv`\n\nRust integration touchpoints (secondary scope): any file where event bits / action semantics matter for L3: `hftbacktest/src/types.rs` (event flags), `hftbacktest/src/backtest/proc/l3_nopartialfillexchange.rs` (EXCH_* event handling), and `hftbacktest/src/backtest/data/reader.rs` (timestamp validation if any).\n\nWhat to hunt (high signal only):\n- Contract mismatches: what Databento `action`/`side`/`flags` mean vs how Rust interprets the resulting event bits.\n- Snapshot handling (`action=='R'`): whether timestamp rewriting can create time warps or hide causality bugs (and whether dataset contains R).\n- Fill semantics: use the timeline + stats to infer whether `F` is partial and how it pairs with `M`/`C`; then check whether Rust L3 semantics are compatible.\n- ID integrity: whether order_id ranges collide with strategy IDs, and whether the engine assumes uniqueness in ways that are guaranteed by the pipeline.\n\nHard requirement per issue: claim, type, severity, reachability class, evidence (python + rust file:line), call-chain (pipeline → event bits → rust handler), minimal repro (2–8 rows/messages), impact, false-positive check.\n"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+  "batch_goal_summary": "This batch continues the backtest/research correctness work described in /Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md. The objective is to fix every remaining issue that is still unfixed in the current codebase, and to prove each fix with a deterministic regression test (test-first: write test, show failure, implement fix, show pass). Each agent must first verify that the assigned item is truly a bug/issue (not merely a design choice), rate severity (Critical/High/Medium/Low), and explain real-world implications for backtest validity, look-ahead risk, PnL/position correctness, and systematic optimism/pessimism. If it is not a bug, the agent must provide a brief but concrete discernment report explaining why, what assumptions it implies, and how it should be documented or parameterized (if appropriate). Execution constraints: run jobs in isolated git worktrees for safety and parallelism, but make Rust compilation efficient by sharing the canonical build cache at /Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target across all jobs (no copying target into worktrees). To keep sandboxing on while allowing shared target writes, the harness grants that target directory as an additional writable path. Agents should avoid broad refactors, keep diffs surgical, avoid touching excluded directories (examples/, live/, connector/, collector/, py-hftbacktest/), and minimize file overlap with other agents. Each job should run targeted tests when possible, and only run the full suite when explicitly assigned.",
+  "concurrency": 10,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "workspace-write",
+    "add_dirs": ["/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target"],
+    "skip_git_repo_check": false,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 10800 },
+  "workspace_policy": { "mode": "isolated" },
+  "jobs": [
+    {
+      "job_id": "fix_06_event_tie_policy_and_lookahead",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator (another GPT‑5.2 instance).\nYou have a narrow scope. Do not expand it; do not “improve unrelated things”.\n\nDual mandate:\n1) Mandate 2 (user goal): execute your assigned slice to completion with high correctness.\n2) Mandate 1 (system-level compounding): leave behind reusable artifacts (tests, checklists) and surface failure modes clearly.\n\nHard output requirements:\n- No secrets. Do not paste huge logs.\n- Artifacts > narration: add tests + minimal code changes.\n- End with required prompt feedback lines:\n  - PROMPT_AMBIGUITY: ...\n  - MISSING_INPUT: ...\n  - PROMPT_DELTA: ...\n\nJob: Fix 06/10 — Event tie policy + within-timestamp look-ahead\n\nInputs:\n- Spec: BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md (agent_01_event_ordering_and_lookahead section)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nFirst, verify whether the reported issues are real bugs in the current code:\n- Same-timestamp ordering: ExchData processed before ExchOrder at equal timestamps.\n- Any fill/ack logic reading post-update book at the same exch_ts.\nIf not a bug (design choice), explain and propose documentation/parameterization.\n\nIf it is a bug/issue:\n- Severity-rate it and explain real-world implications (look-ahead bias, fill optimism).\n- Implement a minimal, explicit same-timestamp policy that removes the look-ahead (or makes it configurable but with a conservative default).\n- Add deterministic unit/regression tests with synthetic data that fail pre-fix and pass post-fix.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n- Prefer targeted test runs: `CARGO_TARGET_DIR=... cargo test -p hftbacktest --lib -- <test_name_substring>`.\n- Capture large outputs to `.ph_artifacts/fix_06_event_tie_policy_and_lookahead/regression_{fail,pass}.txt`.\n\nOutput:\n- Provide a concise report (bug? severity? implications? fix?) and evidence of fail→pass.\n- List files changed and test names added."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_07_goto_end_endofdata_flush",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 5400,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator (another GPT‑5.2 instance).\nYou have a narrow scope. Do not expand it.\n\nHard output requirements: add regression tests + minimal fix; end with PROMPT_* lines.\n\nJob: Fix 07/10 — goto_end/EndOfData timestamp + pending-response flush\n\nInputs:\n- Spec: BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md (agent_01_event_ordering_and_lookahead and agent_03_latency_fee_pnl_accounting notes about goto_end/end-of-data)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nFirst, verify whether these are still real issues in current code:\n- `goto_end()` can leave `cur_ts` unchanged on EndOfData path.\n- `goto_end()` may stop before processing order responses scheduled after the last market-data timestamp (response latency).\n\nIf real bug/issue:\n- Rate severity and explain implications (state drift at end, missing fills/acks, wrong final PnL/position).\n- Add regression tests that fail pre-fix and pass post-fix.\n- Implement minimal fix.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n- Prefer targeted tests.\n\nOutput: concise report + fail→pass evidence + files/tests list.\n\nPROMPT_AMBIGUITY/MISSING_INPUT/PROMPT_DELTA lines at the end."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_08_orderbus_reordering_and_jitter_knob",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; avoid unrelated changes; end with PROMPT_* lines.\n\nJob: Fix 08/10 — OrderBus FIFO clamp realism (design vs bug)\n\nInputs:\n- Spec: BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md (agent_01/agent_02/agent_03 mentions OrderBus FIFO/in-order assumption)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nFirst, decide: is `OrderBus` enforcing nondecreasing timestamps (clamping) a bug, or an explicit design choice? Rate it and explain implications (optimism/pessimism; cancel/replace behavior).\n\nIf it should be fixed/extended:\n- Implement a minimal, opt-in knob (e.g., allow small reordering/jitter without violating invariants) with a conservative default matching current behavior.\n- Add unit tests that lock both modes.\n- Keep API surface small.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput: report + any patch/tests + fail→pass evidence.\n\nPROMPT_* lines at end."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_09_depth_roi_nan_and_out_of_roi_semantics",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; add tests; end with PROMPT_* lines.\n\nJob: Fix 09/10 — ROIVectorMarketDepth NaN poisoning / out-of-ROI semantics\n\nInputs:\n- Spec: BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md (agent_04_depth_models_invariants: NaN qty queries; ignoring out-of-ROI updates)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nFirst, verify in current code:\n- Does ROIVectorMarketDepth return NaN for qty queries outside ROI and can that propagate into queue/fill logic?\n- Is that behavior intended? If intended, is it safe (no NaN propagation) or should it be changed?\n\nIf bug/issue:\n- Rate severity and explain implications (never fills / spurious expiries / corrupted queue state).\n- Implement minimal change to avoid NaN poisoning (prefer finite 0.0 or explicit error/Option, consistent with trait expectations).\n- Add regression tests that fail pre-fix and pass post-fix.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput: report + fail→pass evidence + files/tests list.\n\nPROMPT_* lines at end."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_10_snapshot_roundtrip_btree_and_roi",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 10800,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; add tests; end with PROMPT_* lines.\n\nJob: Fix 10/10 — ApplySnapshot::snapshot panics (BTreeMarketDepth + ROIVectorMarketDepth)\n\nInputs:\n- Spec: BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md (agent_04/agent_02: snapshot() unimplemented panics)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nFirst, verify whether `ApplySnapshot::snapshot()` is still `todo!/unimplemented!` and whether it is reachable in research/backtest paths.\n\nIf bug/issue:\n- Rate severity and explain implications (panic in long runs; inability to round-trip/export; unsafe APIs).\n- Implement minimal, correct `snapshot()` for BTreeMarketDepth and ROIVectorMarketDepth (or refactor so it returns a Result if trait allows; otherwise implement safely).\n- Add snapshot round-trip regression tests (apply_snapshot -> snapshot -> apply_snapshot preserves BBO and level qty for small synthetic snapshots).\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput: report + fail→pass evidence + files/tests list.\n\nPROMPT_* lines at end."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_11_npy_schema_strictness",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 10800,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; add tests; end with PROMPT_* lines.\n\nJob: Fix 11/10 — .npy/.npz schema strictness (field names/count)\n\nInputs:\n- Spec: BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md (agent_05: field-name mismatch only warns; zip() hides count mismatch; missing descr acceptance)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nFirst, verify what is already fixed in current code (some items were addressed in prior bugfix round):\n- field-count mismatch handling\n- required header keys enforcement (descr/shape/fortran_order)\n- field-name mismatch behavior\n\nIf any remaining issue is real:\n- Rate severity and real-world implications (silent corruption / wrong columns).\n- Implement minimal fix: strict matching of field count and (by default) field names/types/order; if a permissive mode is needed, make it explicit and off by default.\n- Add unit tests using small in-memory .npy buffers (or minimal test fixtures) that previously passed incorrectly and now error.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput: report + fail→pass evidence + files/tests list.\n\nPROMPT_* lines at end."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_12_npy_truncation_hang_and_bounds",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 10800,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; add tests; end with PROMPT_* lines.\n\nJob: Fix 12/10 — .npy/.npz truncation: hang/panic/bounds\n\nInputs:\n- Spec: BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md (agent_05: read loop read()==0 hang; unchecked slices/unwraps; header bounds)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nFirst, verify what is already fixed in current code (prior bugfix round may have addressed parts):\n- read loop EOF handling\n- header_len vs file size bounds checks\n- empty file handling\n- replacing unwraps with InvalidData errors\n\nIf remaining issue exists:\n- Rate severity and implications (deadlock/hang in long backtests).\n- Add regression tests for truncated/malformed inputs and demonstrate fail→pass.\n- Implement minimal fix.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput: report + fail→pass evidence + files/tests list.\n\nPROMPT_* lines at end."
+        }
+      ]
+    },
+    {
+      "job_id": "verify_01_partialfill_and_rejected_modify_still_fixed",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; end with PROMPT_* lines.\n\nJob: Verify 01/10 — PartialFillExchange accounting + rejected modify rollback\n\nInputs:\n- Spec: BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md (agent_03)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal:\n1) Verify whether the previously reported issues (partial-fill accounting mismatch; rejected modify rollback) are already fixed in the current codebase.\n2) If anything is still broken, treat it as a bugfix job: add regression test first (show failure), implement fix, show pass.\n3) If already fixed, provide a brief confirmation report and point to the tests that cover it (or add missing tests if there is no coverage).\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput: concise verification report + evidence; list any new tests.\n\nPROMPT_* lines at end."
+        }
+      ]
+    },
+    {
+      "job_id": "verify_02_timestamp_axis_and_overflow_still_fixed",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; end with PROMPT_* lines.\n\nJob: Verify 02/10 — Timestamp axis constraints + overflow/wrap\n\nInputs:\n- Spec: BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md (agent_01 and agent_05 overflow/wrap notes)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal:\n1) Verify which timestamp-overflow and local_ts/exch_ts validation issues remain in current code.\n2) If any remain, implement minimal fixes with test-first regression proof.\n3) If already fixed, provide a concise confirmation and ensure tests exist; add any missing regression tests if coverage is absent.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput: verification report + evidence.\n\nPROMPT_* lines at end."
+        }
+      ]
+    },
+    {
+      "job_id": "audit_01_fill_queue_realism_discernment",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; end with PROMPT_* lines.\n\nJob: Audit 01/10 — Fill/queue realism items: bug vs design\n\nInputs:\n- Spec: BUG_HUNT_SPEC_BACKTEST_REALITY_AUDIT_5_20260120T105737Z.md (agent_02_fill_and_queue_realism)\n\nScope: RESEARCH/BACKTEST ONLY.\nDo NOT touch: examples/, live/, connector/, collector/, py-hftbacktest/.\n\nGoal:\n1) Pick 2–4 concrete claims from the agent_02 report that are most likely to be (a) actual correctness bugs vs (b) deliberate simplifications.\n2) For each claim, verify in the current codebase whether it is a real bug. Rate severity and describe real-world backtest implications.\n3) If any verified item is a correctness bug (not merely a realism limitation), do test-first regression proof and fix it.\n4) If items are design choices / realism limitations, write a short discernment report with recommended parameterization/documentation and a minimal test that prevents outright impossibilities (e.g., no negative quantities, no NaNs, no double-counted fills beyond available volume).\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput: concise report; include fail→pass evidence if code changes are made.\n\nPROMPT_* lines at end."
+        }
+      ]
+    }
+  ]
+}

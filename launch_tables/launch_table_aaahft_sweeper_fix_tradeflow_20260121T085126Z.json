@@ -1,0 +1,30 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+  "batch_goal_summary": "Objective: fix a correctness/coverage gap in the new taker-baseline sweep utility so we can actually sweep the tradeflow baseline, then unblock the next remote compute batch. Current state: `scripts/sweep_taker_baselines.py` attempts to auto-detect the correct CLI flags for entry threshold / TP / SL / hold / cooldown by calling each baseline script with `--help` and selecting from an allowlist of known flag names. This works for the microprice baseline (`--theta-ticks`) and the imbalance baseline (`--theta`), but it fails for the tradeflow baseline because `scripts/backtest_tradeflow_taker.py` uses `--flow-theta` for the entry threshold. The result: `--baseline tradeflow` cannot be swept, and any downstream heatmap/plateau search (especially on the remote 4090 machine) is blocked.\n\nConstraints and guardrails: keep the fix minimal and surgical; do not refactor unrelated code; preserve the existing no-lookahead and execution semantics (ts_recv clock, 1ms latency, $0.58 per side fees) by not touching the baseline strategy implementations. Only fix flag detection and any related operator-facing error messages so future work is robust. Deliverables: a patch to `scripts/sweep_taker_baselines.py` that recognizes `--flow-theta` as a valid entry-threshold flag (and keeps backward compatibility with existing scripts), plus a tiny local sanity sweep (single file, limited record count, very small grid) that produces a normal `outputs/sweep_taker_<UTCSTAMP>/results.csv` and `top_configs.json` for tradeflow. Output must be a valid Run Report JSON (schema_version=1.0.0) with the required PROMPT_* lines embedded in the summary string.",
+  "concurrency": 1,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "high",
+    "sandbox": "workspace-write",
+    "skip_git_repo_check": true,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 7200 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "eng_fix_tradeflow_entry_flag",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "Engineer — Fix tradeflow sweep support (narrow scope)\n\nScope (strict):\n- Read: `scripts/sweep_taker_baselines.py`, `scripts/backtest_tradeflow_taker.py`.\n- Write: modify ONLY `scripts/sweep_taker_baselines.py`.\n\nTask:\n1) Update `detect_param_flags()` so that it can treat `--flow-theta` as a valid entry threshold flag.\n2) Add/adjust any inline help or error messages minimally so future operators understand it.\n3) Sanity run (required): run a tiny sweep for tradeflow on ONE file with `--limit 200000` (or smaller) and a very small grid (e.g., two thresholds, one tp/sl/hold) to confirm it produces `results.csv` and `top_configs.json`.\n\nConstraints:\n- No web search.\n- Keep runtime small.\n\nOutput:\n- Valid Run Report JSON only (schema_version=1.0.0). Include PROMPT_* lines inside the summary string."
+        }
+      ]
+    }
+  ]
+}

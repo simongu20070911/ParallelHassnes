@@ -1,0 +1,75 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+  "batch_goal_summary": "Objective: build a small, fast, statistically honest baseline suite for ES (CME) intraday/HFT research using Databento GLBX.MDP3 TBBO day-files already present under ES_CME/GLBX-*/archive/*.tbbo.dbn.zst. Constraints are binding: no-lookahead via ts_recv visibility (DATA_AVAILABILITY_CONTRACT.md), one-way cost $0.58 per side ($1.16 round trip), and 1ms one-way order-update latency (signal→CME effective). The baseline suite must target many trades/day while remaining net-of-costs and robust: results must be evaluated via heatmaps/plateaus, failure-mode slicing (time-of-day, vol spikes, spread widening), and small trade-trace samples for best/worst cases. This batch is engineering-focused: each agent owns a narrow, non-overlapping file slice to avoid merge conflicts in shared-workspace mode. Deliverables are lightweight, no-deps Python scripts under scripts/ that (a) define additional taker baselines beyond microprice, (b) provide a sweep runner that produces CSV/JSON summaries across day-files, and (c) provide a trace extractor that can dump event windows around selected trades for manual inspection. Every agent must preserve the existing cost/latency semantics and write durable artifacts to outputs/ (UTC-stamped) rather than pasting logs. Output must be a valid Run Report JSON (schema_version=1.0.0); include required PROMPT_* feedback lines inside the summary string.",
+  "concurrency": 5,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "workspace-write",
+    "skip_git_repo_check": true,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 14400 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "eng_00_repo_hygiene_gitignore",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "Engineer 0/5 — Repo hygiene: .gitignore for long-term sanity (narrow scope)\n\nScope (strict): ONLY modify `/Users/simongu/AAAHFT-Futures-Alpha-seek/.gitignore`.\n\nGoal:\n- Make `.gitignore` sensible for long-term work: ignore build artifacts (Rust target dirs), outputs, caches, OS cruft, and large data directories we never want in git if the root becomes a git repo later.\n- Keep it minimal and conservative; do not ignore source.\n\nConstraints:\n- Do not modify any other file.\n- No web search.\n\nDeliverable:\n- Updated `.gitignore`.\n\nOutput:\n- Emit a valid Run Report JSON only (schema_version=1.0.0) with `files_read`, `files_written`, and `artifacts`.\n- Put 1–3 grep-friendly `PROMPT_*` lines at the end of the `summary` string (inside JSON)."
+        }
+      ]
+    },
+    {
+      "job_id": "eng_01_backtest_imbalance_taker",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "Engineer 1/5 — Implement TBBO imbalance taker baseline (new script)\n\nScope (strict):\n- Read: `DATA_AVAILABILITY_CONTRACT.md`, `CURRENT_GOAL.md`, and `scripts/backtest_microprice_taker.py` for patterns.\n- Write: create ONE new file: `scripts/backtest_imbalance_taker.py`.\n- Do NOT modify any other file.\n\nStrategy spec (must follow exactly unless you justify in summary):\n- Clock: use `ts_recv` (visible time).\n- Session filter: support `--session all|rth` (use same RTH definition as microprice script).\n- Entry signal: top-of-book imbalance = (bid_sz - ask_sz)/(bid_sz + ask_sz). If imbalance >= +theta => buy; <= -theta => sell.\n- Entry/exit execution: taker-only with latency: entry at ask/bid (like microprice), exit at bid/ask.\n- Exit: TP/SL in ticks based on mid move (same as microprice script), OR max_hold_ms.\n- Costs: `--cost-per-side 0.58`, multiplier 50, tick_size 0.25 default.\n- Filters: optional spread_max_ticks and min_top_qty (same semantics).\n- Output: write `run.json` + `summary.json` under `outputs/imbalance_taker_<UTCSTAMP>/` unless `--out-dir` provided; optionally write `trades.json` if `--write-trades`.\n\nSanity checks (required):\n- Run a fast sanity pass on one file with `--limit 200000` and confirm it runs end-to-end.\n\nOutput:\n- Valid Run Report JSON only (schema_version=1.0.0). Include PROMPT_* lines inside the summary string."
+        }
+      ]
+    },
+    {
+      "job_id": "eng_02_backtest_tradeflow_taker",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "Engineer 2/5 — Implement TBBO tradeflow taker baseline (new script)\n\nScope (strict):\n- Read: `DATA_AVAILABILITY_CONTRACT.md`, `CURRENT_GOAL.md`, `scripts/backtest_microprice_taker.py`.\n- Write: create ONE new file: `scripts/backtest_tradeflow_taker.py`.\n- Do NOT modify any other file.\n\nStrategy spec:\n- Clock: `ts_recv`.\n- Session filter: `--session all|rth`.\n- Tradeflow signal: use tbbo fields `action/side/price/size` from `dbn -J` stream. Maintain a rolling window over the last `--flow-window-ms` (default 50ms) of signed volume (buy-initiated positive, sell-initiated negative). Convert to a normalized score (e.g., signed_vol / total_vol, or signed_vol alone) and compare to threshold `--flow-theta`.\n- Entry: if score >= +theta => buy; <= -theta => sell.\n- Execution: taker-only, same as microprice script (entry at ask/bid with latency; exits at bid/ask).\n- Exit: TP/SL on mid move in ticks OR max_hold_ms.\n- Costs/latency defaults: fee 0.58 per side; latency 1ms.\n- Filters: optional spread_max_ticks and min_top_qty.\n- Output: same pattern as other scripts (outputs/tradeflow_taker_<UTCSTAMP>/ with run.json + summary.json; optional trades.json).\n\nSanity checks (required):\n- Run a fast sanity pass on one file with `--limit 200000` and confirm it runs end-to-end.\n\nOutput:\n- Valid Run Report JSON only (schema_version=1.0.0). Include PROMPT_* lines inside the summary string."
+        }
+      ]
+    },
+    {
+      "job_id": "eng_03_sweep_runner_taker_baselines",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 10800,
+          "prompt": "Engineer 3/5 — Implement sweep runner for taker baselines (new script)\n\nScope (strict):\n- Read: `scripts/backtest_microprice_taker.py` (+ new taker scripts from Eng 1/2 once present).\n- Write: create ONE new file: `scripts/sweep_taker_baselines.py`.\n- Do NOT modify any other file.\n\nGoal:\n- Provide a no-deps sweep driver that can run parameter grids over multiple day-files (glob) and produce a consolidated results table.\n\nRequirements:\n- Must support sweeping at least: theta/threshold, tp_ticks, sl_ticks, max_hold_ms, spread_max_ticks, cooldown_ms.\n- Must support selecting which baseline to sweep: microprice | imbalance | tradeflow.\n- Must write outputs under `outputs/sweep_taker_<UTCSTAMP>/`:\n  - `run.json` (args, files),\n  - `results.csv` (one row per config, include n_trades, pnl_dollars, pnl_per_trade, win_rate, avg_hold_ms),\n  - `top_configs.json` (top 20 by pnl_dollars and by pnl_per_trade, with tie-breaks).\n- Must avoid huge runs in the sanity test: for verification, run a very small grid on ONE file with `--limit 200000`.\n\nOutput:\n- Valid Run Report JSON only (schema_version=1.0.0). Include PROMPT_* lines inside the summary string."
+        }
+      ]
+    },
+    {
+      "job_id": "eng_04_trace_extractor_tbbo",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 10800,
+          "prompt": "Engineer 4/5 — Trade trace extractor for manual inspection (new script)\n\nScope (strict):\n- Read: `scripts/backtest_microprice_taker.py` and any trades.json format written by the taker scripts.\n- Write: create ONE new file: `scripts/extract_trade_traces_tbbo.py`.\n- Do NOT modify any other file.\n\nGoal:\n- Given a `trades.json` from any taker baseline and the corresponding dbn day-file, extract event windows around selected trades for manual inspection.\n\nRequirements:\n- Input args:\n  - `--trades-json <path>`\n  - `--dbn-file <path>` (or infer from trades entries)\n  - `--which best|worst|index` and `--n <int>` (default 5)\n  - `--window-ms <int>` (default 2000)\n  - `--out-dir` (default outputs/traces_<UTCSTAMP>/)\n- Output:\n  - Write `trace_index.json` summarizing selected trades.\n  - For each selected trade, write `trace_<k>.jsonl` containing the dbn-derived stream (ts_recv, levels[0], trade fields) within the window.\n  - Keep it compact: only needed fields.\n\nSanity check:\n- If no existing trades.json is present, generate a small one by running microprice taker with `--write-trades --max-trades-written 2000 --limit 200000` and then extract traces.\n\nOutput:\n- Valid Run Report JSON only (schema_version=1.0.0). Include PROMPT_* lines inside the summary string."
+        }
+      ]
+    }
+  ]
+}
+

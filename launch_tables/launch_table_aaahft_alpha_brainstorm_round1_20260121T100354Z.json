@@ -1,0 +1,164 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+  "batch_goal_summary": "Diverse, from-scratch alpha brainstorming batch for AAAHFT ES (CME) TBBO research. Objective: generate many concrete, testable hypotheses for high-frequency scalping and market making without relying on the literature-derived Alpha Bank, to maximize idea diversity and avoid convergence on the same mechanisms. Each agent must respect binding constraints: no lookahead (use `ts_recv` as the visibility clock), 1ms one-way latency from signal to CME order update effective time, and $0.58 per side costs ($1.16 round trip) for both maker and taker. Data is TBBO-only (top-of-book + trade print fields), so any hypothesis requiring full depth, hidden liquidity, or true queue position must be marked infeasible or expressed as a TBBO-feasible proxy with caveats. Agents should cover both market-order/taker and limit-order/maker styles, including price-action style pattern logic (e.g., Brooks-like concepts translated to micro time/event/range bars), classic indicator-based scalping automation adapted to microstructure, and robust regime filters/stop logic designed to survive spread widening and volatility spikes. Deliverables must be written to disk as YAML hypotheses with explicit parameter sweeps, diagnostics (heatmaps/plateaus, failure-mode slices, event traces), and cost-feasibility reasoning. No heavy coding; produce research artifacts only.",
+  "concurrency": 7,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "workspace-write",
+    "skip_git_repo_check": true,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 14400 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "brain_01_brooks_price_action",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: Brooks-style price action translated to microstructure.\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 10 using micro-bars (50–500ms time bars OR 50–500 event bars OR 1–3 tick range bars).\n- 6 taker/market-order entries (with explicit TP/SL/hold).\n- 6 maker/limit-order entries (with toxicity filters and explicit queue-position caveats).\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/01_brooks_price_action.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_01_brooks_price_action.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_02_indicator_scalping",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: indicator-based scalping automation adapted to TBBO.\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 10 using classic indicators on micro-bars (EMA/RSI/ROC/Bollinger/VWAP deviation/ATR) with explicit bar definitions.\n- 6 that include regime filters (spread=1 tick only, min depth, vol regime, time-of-day).\n- 6 maker ideas and 6 taker ideas.\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/02_indicator_scalping.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_02_indicator_scalping.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_03_taker_breakout_momentum",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: taker breakout/momentum scalps (fast reaction, short holds).\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 12 taker-first entry ideas with explicit requirement to clear spread+fees (explain with ticks vs $).\n- 6 ideas using trade-intensity / signed tradeflow bursts as triggers.\n- 4 ideas that explicitly avoid bad regimes (spread widening, thin depth, volatility spikes).\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/03_taker_breakout_momentum.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_03_taker_breakout_momentum.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_04_taker_mean_reversion_fades",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: taker mean-reversion / fade extremes / liquidity reversion.\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 10 fade-style triggers built from micro-bars or event-time features (e.g., spike + exhaustion + pullback entry).\n- 6 that use spread/depth filters to avoid catching knives.\n- 4 that incorporate 'scratch' exits / timeouts as core to expectancy.\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/04_taker_mean_reversion_fades.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_04_taker_mean_reversion_fades.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_05_maker_mm_core",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: passive market making / spread capture under TBBO-only.\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 12 maker-first ideas (join best bid/ask, skew, inventory bounds, cancel/replace logic).\n- 8 with explicit toxicity detectors (tradeflow imbalance, microprice vs mid, spread changes, depth thinning).\n- 6 with 'when NOT to quote' rules (session windows, vol spikes, spread>1).\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/05_maker_mm_core.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_05_maker_mm_core.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_06_maker_toxicity_filters",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: maker strategies + explicit anti-adverse-selection / toxicity filtering.\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 12 maker-first entries.\n- 10 hypotheses framed as 'filters' (i.e., they improve other strategies by avoiding toxic conditions) with clear measurable signals.\n- 6 hypotheses that mix maker entry with taker exits (or vice versa) and justify.\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/06_maker_toxicity_filters.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_06_maker_toxicity_filters.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_07_stop_logic_risk",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: stop logic, risk management, and trade lifecycle design (native stops allowed).\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 10 hypotheses about exit logic that materially changes expectancy (time stops, scratch logic, dynamic TP/SL, trailing stops).\n- 6 hypotheses about kill-switch / circuit breakers based on TBBO-measurable conditions.\n- 6 hypotheses that explicitly target 'many trades/day' while controlling tail risk.\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/07_stop_logic_risk.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_07_stop_logic_risk.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_08_session_time_of_day",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: session microstructure and time-of-day edges (Globex vs RTH, open/close windows).\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 12 hypotheses that are explicitly time-windowed (e.g., first 5 minutes of RTH, last 10 minutes, lunch lull, Globex reopen).\n- 8 hypotheses that combine a time window with a microstructure trigger (spread/depth/trade intensity).\n- Include both maker and taker variants where plausible.\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/08_session_time_of_day.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_08_session_time_of_day.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_09_vol_regime_spread_depth",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: volatility regime, spread widening, depth thinning — and adaptive control.\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 10 regime filters that are TBBO-measurable and can be applied to other strategies.\n- 6 adaptive execution ideas (switch maker↔taker, widen quotes, reduce holding time) triggered by regime shifts.\n- 4 ideas focused on burst-event handling (trade intensity spikes, rapid quote changes).\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/09_vol_regime_spread_depth.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_09_vol_regime_spread_depth.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_10_microstructure_misc",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: miscellaneous microstructure hypotheses (unusual, creative, but still testable with TBBO-only).\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 8 ideas that are 'non-obvious' (not just imbalance/microprice), but still TBBO-feasible.\n- 6 maker/taker hybrid lifecycle designs.\n- 6 ideas framed as 'fast falsifiable' (simple test, clear expected signature).\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/10_microstructure_misc.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_10_microstructure_misc.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_11_tape_absorption_stopruns",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: tape reading proxies — absorption, exhaustion, stop-runs — using only TBBO + trade prints.\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 10 ideas built from sequences of trades at bid/ask + how top-of-book sizes react (absorption vs sweep).\n- 6 ideas that explicitly define 'stop-run' proxy signatures and how to trade after (reversal vs continuation).\n- 6 that include tight timeouts and trace diagnostics as mandatory.\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/11_tape_absorption_stopruns.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_11_tape_absorption_stopruns.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_12_opening_range_mechanics",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: opening-range / first-hour mechanics (high volume, fast microstructure shifts).\n\nConstraints: do NOT read anything under research/alpha_bank/ or research/literature/.\n\nProduce 18 hypotheses, at least:\n- 12 hypotheses specifically targeting the first 15–60 minutes of RTH.\n- 6 hypotheses that explicitly compare maker vs taker outcomes depending on spread/depth.\n- 6 hypotheses that include volatility gating and tail-risk controls.\n\nWrite artifacts:\n- research/alpha_ideation/round1_20260121T100354Z/12_opening_range_mechanics.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_12_opening_range_mechanics.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    }
+  ]
+}
+

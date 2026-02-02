@@ -1,0 +1,42 @@
+{
+  "working_root": "/home/gaen",
+  "batch_goal_summary": "Objective: prepare the remote 4090 box (gaen@192.168.110.42) for long-running ES TBBO research workloads while keeping the orchestrator’s local Mac free. This batch is strictly remote bootstrap/ops: install missing CLI tooling needed by the ES pipeline (Databento dbn CLI), create a durable remote state directory for run logs/metadata, verify GPU availability, and create a stable project root directory that can receive a later rsync of `/Users/simongu/AAAHFT-Futures-Alpha-seek` from the local machine. Constraints: do not do strategy research here; do not edit local-machine files; do not assume the project directory exists yet; and do not rely on web search. Deliverables must be durable, machine-readable artifacts written under `/home/gaen/aaahft_remote_state/` so future runs can detect environment drift (Python/Rust/dbn versions, GPU status). Keep output small: no pasted logs; if a command has noisy output, redirect it to an artifact file and reference that path. Each agent owns a narrow slice to avoid toe-stepping. Output must be a valid Run Report JSON (schema_version=1.0.0); include required PROMPT_* feedback lines inside the summary string.",
+  "concurrency": 2,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "high",
+    "sandbox": "workspace-write",
+    "skip_git_repo_check": true,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 14400 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "remote_eng_01_install_dbn_cli",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 10800,
+          "prompt": "Remote Engineer 1/2 — Install Databento `dbn` CLI (narrow scope)\n\nScope:\n- Work only in `/home/gaen` and user home directories.\n- Do NOT assume project repo is present.\n\nTasks:\n1) Ensure `dbn` CLI is installed and runnable on this machine.\n   - Preferred: `cargo install dbn-cli` (pin to the local Mac version if you can detect it from notes: 0.44.0), or document the installed version.\n2) Verify with `dbn --version` and `which dbn`.\n3) Write a small environment note to `/home/gaen/aaahft_remote_state/dbn_install_<UTCSTAMP>.json` with: dbn_version, dbn_path, rustc_version, cargo_version.\n\nConstraints:\n- No web search.\n- Do not paste long build logs; redirect to a log artifact if needed.\n\nOutput:\n- Valid Run Report JSON only (schema_version=1.0.0). Include PROMPT_* lines inside the summary string."
+        }
+      ]
+    },
+    {
+      "job_id": "remote_eng_02_remote_state_and_gpu_check",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 3600,
+          "prompt": "Remote Engineer 2/2 — Create remote state dir + GPU availability check (narrow scope)\n\nScope:\n- Only create/write under `/home/gaen/aaahft_remote_state/` and create the placeholder directory `/home/gaen/AAAHFT-Futures-Alpha-seek/` (empty ok).\n\nTasks:\n1) Create `/home/gaen/aaahft_remote_state/` if missing.\n2) Record machine environment to `/home/gaen/aaahft_remote_state/env_<UTCSTAMP>.json`:\n   - python3 --version\n   - rustc --version\n   - cargo --version\n   - nvidia-smi summary (name, memory used/total, util) if present\n   - free disk (df -h for /home)\n3) Ensure `/home/gaen/AAAHFT-Futures-Alpha-seek/` exists (mkdir -p).\n\nConstraints:\n- No web search.\n- No pasted logs.\n\nOutput:\n- Valid Run Report JSON only (schema_version=1.0.0). Include PROMPT_* lines inside the summary string."
+        }
+      ]
+    }
+  ]
+}
+

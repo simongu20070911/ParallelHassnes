@@ -12,6 +12,7 @@ except Exception:  # pragma: no cover
     Request = Any  # type: ignore[misc,assignment]
 
 from parallelhassnes.config.harness_config import HarnessConfig, write_harness_config_snapshots
+from parallelhassnes.core.atomic_io import write_atomic_json
 from parallelhassnes.core.paths import Paths
 from parallelhassnes.harness.harness import Harness
 from parallelhassnes.interfaces.fs_queue import FsQueue
@@ -183,12 +184,25 @@ def create_app(
     @app.get("/v1/scoreboards/system")
     def scoreboard_system(request: Request) -> Any:
         _enforce(request)
-        return JSONResponse(compute_system_scoreboard(store))
+        out = compute_system_scoreboard(store)
+        # Best-effort: keep filesystem scoreboard artifacts fresh for operators who read
+        # runs/_system/scoreboard.system.json directly while long-running batches are active.
+        try:
+            write_atomic_json(paths.runs_root / "_system" / "scoreboard.system.json", out)
+        except Exception:
+            pass
+        return JSONResponse(out)
 
     @app.get("/v1/batches/{batch_id}/scoreboard")
     def scoreboard_batch(request: Request, batch_id: str) -> Any:
         _enforce(request)
-        return JSONResponse(compute_batch_scoreboard(store, batch_id=batch_id))
+        out = compute_batch_scoreboard(store, batch_id=batch_id)
+        # Best-effort: keep runs/<batch_id>/scoreboard.batch.json fresh for filesystem operators.
+        try:
+            write_atomic_json(paths.batch_dir(batch_id) / "scoreboard.batch.json", out)
+        except Exception:
+            pass
+        return JSONResponse(out)
 
     @app.get("/v1/batches/{batch_id}/jobs/{job_id}/current")
     def get_current(request: Request, batch_id: str, job_id: str) -> Any:

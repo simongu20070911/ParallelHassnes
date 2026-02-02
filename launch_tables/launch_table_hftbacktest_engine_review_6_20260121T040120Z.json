@@ -1,0 +1,86 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+  "batch_goal_summary": "Run a read-only, shared-workspace, ultra-deep review of the Rust backtest engine logic in /Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest at commit 660e60a. Scope is strictly correctness/safety/performance of event scheduling and the backtest engine: event loop (Backtest::goto/elapse/goto_end), event tie-breaking and ordering, timestamp axis assumptions and overflow/sentinel handling, order buses and latency scheduling, exchange/local processors and state accounting invariants, depth models’ invariants and hot loops, and data ingestion / POD / alignment safety assumptions. Each of the 6 agents must go very deep but in diverse slices; do not overlap work. Constraints: do not modify files, do not run any command that writes to the repo (no cargo build/test/format; no creating artifacts in the workspace); do not use web search. Each agent must first verify whether a suspected issue is truly a bug vs a deliberate design/realism simplification; rate severity (Critical/High/Medium/Low), describe real-world implications for backtest validity (look-ahead, PnL/position correctness, systematic optimism/pessimism), and provide concrete, minimal recommended patches/tests (as text only). Include “reality checks”: simulate plausible market-data/order-timestamp scenarios that could trigger the issue and explain expected vs actual behavior. Output must be a concise Run Report JSON (schema_version=1.0.0) and end with 1–3 grep-friendly prompt feedback lines (PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA).",
+  "concurrency": 6,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "read-only",
+    "skip_git_repo_check": false,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 10800 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "review_01_event_loop_and_tie_breaks",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "Agent 1/6 — Event loop + ordering + tie-break correctness (ultra-deep)\n\nScope:\n- Focus only on event scheduling/dispatch: `hftbacktest/src/backtest/mod.rs` (Backtest::goto/elapse/wait_*), `hftbacktest/src/backtest/evs.rs` (EventSet), and any direct callers.\n- Exclude: examples/, connector/, collector/, py-hftbacktest/, live/.\n\nTasks:\n1) Verify the exact ordering rules for ties at equal timestamps and cross-asset ordering. Confirm the intended invariant (no within-timestamp look-ahead) is actually satisfied across all paths.\n2) Hunt for any remaining look-ahead / mis-ordering risks (including subtle ones: local-vs-exchange timestamp comparability, same-ts snapshots, post-update depth reads, end-of-data transitions, drains of buses).\n3) Performance: identify hot loops in event selection and any avoidable O(N) scans; propose minimal changes that improve perf without changing semantics.\n4) Deliver a ranked issue list: (a) confirmed bugs, (b) suspicious but needs data contract assumptions, (c) deliberate simplifications.\n\nConstraints:\n- Read-only: do NOT run cargo; do NOT edit files.\n- Provide file:line references.\n\nOutput:\n- Run Report JSON only (schema_version=1.0.0) with: summary + severity table + recommended tests + minimal patch sketch.\n- End with PROMPT_AMBIGUITY/MISSING_INPUT/PROMPT_DELTA lines."
+        }
+      ]
+    },
+    {
+      "job_id": "review_02_timestamp_axis_overflow_sentinels",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "Agent 2/6 — Timestamp axis, overflow, and sentinel correctness (ultra-deep)\n\nScope:\n- Backtest timestamp arithmetic and sentinel semantics: `hftbacktest/src/backtest/mod.rs`, `hftbacktest/src/backtest/order.rs`, `hftbacktest/src/backtest/data/reader.rs`, `hftbacktest/src/backtest/models/latency.rs`, and related types.\n\nTasks:\n1) Map all timestamp domains and invariants: exch_ts, local_ts, “seen timestamps”, UNTIL_END_OF_DATA sentinel, and any reserved values.\n2) Exhaustively search for remaining unchecked additions/subtractions/comparisons that can overflow, underflow, wrap, or silently clamp (and judge whether clamp is safe).\n3) Reality-check scenarios: negative offsets, very large offsets, far-future timestamps, zero/negative durations/timeouts, and mismatched time units.\n4) Performance: identify any per-event overhead in checks; suggest low-cost guard placement.\n\nConstraints:\n- Read-only; no cargo; no edits.\n\nOutput:\n- Run Report JSON only (schema_version=1.0.0) with a checklist of invariants, confirmed risks, and concrete regression tests you would add.\n- End with PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "review_03_order_bus_latency_scheduling",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "Agent 3/6 — OrderBus + latency scheduling correctness and realism/perf (ultra-deep)\n\nScope:\n- `hftbacktest/src/backtest/order.rs` and how buses interact with Backtest loop.\n- Relevant processor codepaths where bus timestamps affect behavior.\n\nTasks:\n1) Verify invariants: monotonicity / ordering guarantees, bounded reordering window semantics, and safety around reserved timestamps.\n2) Identify edge cases that can cause: missed deliveries, assertion panics, starvation, or reordering that changes semantics unexpectedly.\n3) Realism: is FIFO clamp vs bounded reordering coherent and correctly surfaced as a knob? Identify any mismatch between documented behavior and implemented behavior.\n4) Performance: assess algorithmic cost of insertions in the reordering mode; suggest improvements (data structure or constraints) while preserving determinism.\n\nConstraints: read-only.\n\nOutput: Run Report JSON only + PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "review_04_exchange_local_processors_state_invariants",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "Agent 4/6 — Exchange/Local processors: state-machine correctness + performance (ultra-deep)\n\nScope:\n- Backtest processors and state accounting: `hftbacktest/src/backtest/proc/*` (especially partial/no-partial exchanges and local), plus `hftbacktest/src/backtest/state.rs` and any shared types.\n\nTasks:\n1) Verify core invariants: no double-counting of fills, consistent position/balance/fee, order lifecycle correctness under New/Modify/Cancel/Reject/Expire/Fill (including partials).\n2) Identify any remaining internal inconsistencies (local vs exchange state drift; queue model updates; collisions and limitations).\n3) Reality checks: multi-leg executions, partial fill + IOC/FOK, cancel/replace races, end-of-data flush, cross/no-cross scenarios.\n4) Performance: identify hot paths and heavy allocations (HashMap/HashSet churn) and propose minimal changes.\n\nConstraints: read-only.\n\nOutput: Run Report JSON only + PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "review_05_depth_models_invariants_and_hotloops",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "Agent 5/6 — Depth models: invariants, safety, and hot-loop performance (ultra-deep)\n\nScope:\n- `hftbacktest/src/depth/*` used by backtests (HashMapMarketDepth, ROIVectorMarketDepth, BTreeMarketDepth, fused depth where relevant).\n\nTasks:\n1) Verify invariants: BBO correctness under updates/clears, snapshot semantics, crossed-book behavior, NaN propagation, tick/lot rounding, and correctness of unsafe indexing.\n2) Confirm that snapshot/apply_snapshot are coherent and safe; identify any remaining panics or undefined behavior risk.\n3) Performance: identify top hot loops (best recompute scans, ROI range iteration, HashMap iteration) and propose minimal improvements.\n4) Provide a short recommended benchmark/test plan (no running, just plan).\n\nConstraints: read-only.\n\nOutput: Run Report JSON only + PROMPT_* lines."
+        }
+      ]
+    },
+    {
+      "job_id": "review_06_data_ingest_pod_alignment_ub_risks",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "Agent 6/6 — Data ingest + POD/alignment/UB safety audit (ultra-deep)\n\nScope:\n- `.npy/.npz` ingestion and Data/DataPtr casting: `hftbacktest/src/backtest/data/npy/*`, `hftbacktest/src/backtest/data/mod.rs`, `hftbacktest/src/utils/aligned.rs`, and any unsafe casts.\n\nTasks:\n1) Identify any remaining panic/hang vectors and whether they are truly closed.\n2) Safety audit: assess whether the POD marker is sound enough for the casting performed; look for padding/uninitialized issues, bool/enums, alignment assumptions, and any UB hazards.\n3) Provide a concrete hardening roadmap: minimal changes first (guard rails), then stronger type-safety (trait bounds / bytemuck-like), plus a test plan.\n4) Performance: consider whether safer parsing/copying materially affects speed and how to contain it.\n\nConstraints: read-only.\n\nOutput: Run Report JSON only + PROMPT_* lines."
+        }
+      ]
+    }
+  ]
+}
+

@@ -74,6 +74,11 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     p_sb.add_argument("--root", default=str(Path.cwd()), help="Project root (default: cwd)")
     p_sb.add_argument("--runs-root", default=None)
     p_sb.add_argument("--batch-id", default=None, help="If provided, compute per-batch view only")
+    p_sb.add_argument(
+        "--write",
+        action="store_true",
+        help="Write scoreboard JSON files to disk (updates runs/_system/scoreboard.system.json and/or runs/<batch_id>/scoreboard.batch.json).",
+    )
     p_sb.add_argument("--json", action="store_true", help="Emit JSON to stdout")
 
     p_submit = sub.add_parser("submit", help="Submit a Launch Table file into the filesystem queue")
@@ -431,6 +436,22 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.cmd == "scoreboard":
+        if getattr(args, "write", False):
+            from parallelhassnes.core.paths import Paths
+            from parallelhassnes.storage.runs_store import RunsStore
+
+            store = RunsStore(Paths(runs_root=runs_root, runners_root=runners_root))
+            # Always refresh the system scoreboard (cheap, operator-useful).
+            try:
+                store.write_system_scoreboard()
+            except Exception:
+                pass
+            bid = getattr(args, "batch_id", None)
+            if isinstance(bid, str) and bid.strip():
+                try:
+                    store.write_batch_scoreboard(bid.strip())
+                except Exception:
+                    pass
         out = harness.compute_scoreboards(batch_id=getattr(args, "batch_id", None))
         if args.json:
             print(json.dumps(out, ensure_ascii=False, indent=2))

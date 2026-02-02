@@ -1,0 +1,120 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+  "batch_goal_summary": "Literature-first alpha banking for AAAHFT ES (CME) TBBO research. Objective: produce a high-quality, auditable Alpha Bank (hypothesis inventory) grounded in existing local PDFs/notes before doing any heavy backtest implementation. Inputs are local archives: `/Users/simongu/Downloads/Archive/HFT MM/` and `/Users/simongu/Downloads/Archive/Book/` plus curated paper folders under `/Users/simongu/Documents/fin_papers/papers/`. Constraints are binding and must be reflected in every hypothesis: no-lookahead via `ts_recv` visibility, one-way latency 1ms from signal to CME order update effective time, and cost $0.58 per side ($1.16 round trip) for both maker and taker. Data limitation: TBBO only (top-of-book + trade print fields), so deep-book/queue-position assumptions must be explicitly marked as not identifiable. Each agent owns a narrow slice (a themed subset of papers) and must produce two artifacts: (1) a markdown literature note with design implications and TBBO feasibility, and (2) a machine-readable YAML list of actionable hypotheses with parameter sweeps, failure-mode slices, and explicit cost-feasibility statements. Agents may use `pdfinfo`/`pdftotext` for local extraction but must not store full-paper text or paste large excerpts. No code changes beyond writing these research artifacts. Output per agent must be a valid Run Report JSON (schema_version=1.0.0) with required PROMPT_* feedback lines in the summary.",
+  "concurrency": 8,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "workspace-write",
+    "add_dirs": [
+      "/Users/simongu/Downloads/Archive",
+      "/Users/simongu/Documents/fin_papers/papers"
+    ],
+    "skip_git_repo_check": true,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 14400 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "lit_01_mm_foundations",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/LIT_ALPHA_BANK_V1.md",
+          "append_prompt": "Your assignment: market making & inventory-risk foundations.\n\nRead these PDFs (local paths):\n- /Users/simongu/Downloads/Archive/HFT MM/Gatheral60 - Stoikov.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/Dealing_with_Inventory_Risk.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/A mean-field game of market-making against strategic traders.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/Algo-Trading-and-Market-Making.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/Almgren5.pdf\n\nWrite artifacts:\n- research/literature/01_mm_foundations.md\n- research/alpha_bank/raw_hypotheses_01_mm_foundations.yaml\n\nAlso read (for constraints): CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "lit_02_orderflow_toxicity",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/LIT_ALPHA_BANK_V1.md",
+          "append_prompt": "Your assignment: order flow, imbalance, and toxicity measures.\n\nRead these PDFs (local paths):\n- /Users/simongu/Downloads/Archive/HFT MM/VPIN.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/Order Imbalance Strategy.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/Brock_Jiang_Jinzhi_2015.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/ssrn-2970694.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/ssrn-4223813.pdf\n\nWrite artifacts:\n- research/literature/02_orderflow_toxicity.md\n- research/alpha_bank/raw_hypotheses_02_orderflow_toxicity.yaml\n\nAlso read (for constraints): CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "lit_03_deep_lob_models",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/LIT_ALPHA_BANK_V1.md",
+          "append_prompt": "Your assignment: deep learning / representation learning for the limit order book.\n\nRead these PDFs (local paths):\n- /Users/simongu/Downloads/Archive/HFT MM/DeepLOB-Deep-Convolutional-Neural-Networks-for-Limit-Order-Books.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/2112.13213v4.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/2211.01346v2.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/2211.06046v2.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/1804.04216v1.pdf\n\nDeliverable emphasis:\n- Translate any deep-book features into TBBO-feasible proxies (or mark as not feasible).\n\nWrite artifacts:\n- research/literature/03_deep_lob_models.md\n- research/alpha_bank/raw_hypotheses_03_deep_lob_models.yaml\n\nAlso read (for constraints): CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "lit_04_recent_arxiv_1",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/LIT_ALPHA_BANK_V1.md",
+          "append_prompt": "Your assignment: scan recent arXiv-style papers (set 1) for actionable mechanisms.\n\nRead these PDFs (local paths):\n- /Users/simongu/Downloads/Archive/HFT MM/2403.08202v1.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/2404.18200v1.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/2405.08101v3.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/2406.14537v1.pdf\n\nWrite artifacts:\n- research/literature/04_recent_arxiv_1.md\n- research/alpha_bank/raw_hypotheses_04_recent_arxiv_1.yaml\n\nAlso read (for constraints): CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "lit_05_recent_arxiv_2",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/LIT_ALPHA_BANK_V1.md",
+          "append_prompt": "Your assignment: scan recent arXiv-style papers (set 2) for actionable mechanisms.\n\nRead these PDFs (local paths):\n- /Users/simongu/Downloads/Archive/HFT MM/2408.01271v4.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/2409.12776v2.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/2412.01062v1.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/2506.11921v1.pdf\n\nWrite artifacts:\n- research/literature/05_recent_arxiv_2.md\n- research/alpha_bank/raw_hypotheses_05_recent_arxiv_2.yaml\n\nAlso read (for constraints): CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "lit_06_practitioner_priors",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/LIT_ALPHA_BANK_V1.md",
+          "append_prompt": "Your assignment: practitioner priors + practical baselines + failure modes.\n\nRead these PDFs (local paths):\n- /Users/simongu/Downloads/Archive/HFT MM/Headlands-Quant-Trading-Summary-Max-Dama.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/LimitOrderBook.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/TrendModel.pdf\n- /Users/simongu/Downloads/Archive/HFT MM/Optimizing_Risk-Adjusted_Return.pdf\n\nDeliverable emphasis:\n- Translate content into 10–20 concrete TBBO-feasible hypotheses with explicit failure modes and parameter sweep planes.\n\nWrite artifacts:\n- research/literature/06_practitioner_priors.md\n- research/alpha_bank/raw_hypotheses_06_practitioner_priors.yaml\n\nAlso read (for constraints): CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "lit_07_fin_papers_notes",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/LIT_ALPHA_BANK_V1.md",
+          "append_prompt": "Your assignment: synthesize existing fin_papers notes into TBBO-feasible hypotheses.\n\nRead these directories (local paths). Focus on `alpha.md`, `microstructure.md`, `performance.md`, `audit.md`, `notes.md`:\n- /Users/simongu/Documents/fin_papers/papers/2021_ghosh_intraday_directional_lstm_rf/\n- /Users/simongu/Documents/fin_papers/papers/2024_goluza_positional_context_intraday_drl/\n- /Users/simongu/Documents/fin_papers/papers/2024_ong_deepunifiedmom_momentum_moe/\n- /Users/simongu/Documents/fin_papers/papers/2024_zhu_image_induced_importance_weights/\n- /Users/simongu/Documents/fin_papers/papers/2025_hornek_continuous_intraday_lob_neighbors/\n- /Users/simongu/Documents/fin_papers/papers/2025_luwang_intraday_order_transition_markov/\n\nDeliverable emphasis:\n- Convert any deep-book or feature-heavy methods into TBBO-feasible proxies, or mark as infeasible.\n- Extract any ideas about labels/horizons that map to our TP/SL first-passage framing.\n\nWrite artifacts:\n- research/literature/07_fin_papers_notes.md\n- research/alpha_bank/raw_hypotheses_07_fin_papers_notes.yaml\n\nAlso read (for constraints): CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "lit_08_books_scan",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/LIT_ALPHA_BANK_V1.md",
+          "append_prompt": "Your assignment: scan books for microstructure/implementation-relevant hypotheses.\n\nRead these PDFs (local paths):\n- /Users/simongu/Downloads/Archive/Book/236194654-HFT.pdf\n- /Users/simongu/Downloads/Archive/Book/701045384-高频交易-原书第2版-艾琳-奥尔德里奇-Irene-Aldridge-Etc-Z-lib-org.pdf\n- /Users/simongu/Downloads/Archive/Book/807633693-算法交易-制胜策略与原理-欧内斯特-陈-Ernest-P-chan.pdf\n\nGuidance:\n- Do NOT attempt to summarize entire books. Extract only the most relevant, implementable concepts (scalping, MM, regime filters, risk control, latency/cancel behavior).\n\nWrite artifacts:\n- research/literature/08_books_scan.md\n- research/alpha_bank/raw_hypotheses_08_books_scan.yaml\n\nAlso read (for constraints): CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    }
+  ]
+}
+

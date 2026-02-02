@@ -1,0 +1,85 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+  "batch_goal_summary": "Re-run a 6-agent, x-high reasoning, read-only audit of the Rust L3 MBO (market-by-order) simulation path in hftbacktest, but this time focus only on actually critical issues: order/event mismatches, incorrect queue/position/fill modeling, logical errors that can corrupt book/queue state, lookahead or optimistic same-timestamp ordering, contract violations between processors (e.g., waiting for a specific response), and performance pathologies that can change outcomes (e.g., missed events due to inefficiency) or make realistic runs infeasible. Avoid discussing mere design preferences; only include design gaps if they materially bias fills/PNL or prevent faithful simulation (especially for CME Globex). Constraints: no web, no cargo/tests, no file writes (read-only). Therefore, agents must output all detailed findings inline in their final response within the allowed Run Report schema: embed a machine-extractable issue list inside the `summary` field using a BEGIN_ISSUES_JSON/END_ISSUES_JSON block with file:line evidence, reproduction scenarios, minimal fix sketches, and regression test ideas. Each agent must cover a distinct slice of the Rust code under hftbacktest/ and must not overlap other agents.",
+  "concurrency": 6,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "read-only",
+    "skip_git_repo_check": false,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 10800 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "crit_01_l3_fifo_queue_integrity",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 1/6.\n\nCommon constraints: read-only, no cargo/tests, no web, Rust only in hftbacktest/.\nOutput: final response must be harness Run Report JSON; embed details inside `summary` between BEGIN_ISSUES_JSON/END_ISSUES_JSON.\n\nScope (strict): `hftbacktest/src/backtest/models/queue.rs` — L3QueueModel + L3FIFOQueueModel.\n\nHunt for CRITICAL issues only:\n- queue corruption, incorrect FIFO ordering, bad fill-range bounds, duplicate ID handling, incorrect assumptions about add/modify/cancel/fill sequencing, and any path that can silently drop or double-fill backtest orders.\n- if you believe behavior depends on CME/MDP3 semantics, mark `needs_spec` but only if it blocks correctness.\n\nRequired: for each issue include file:line, a minimal repro scenario (event sequence), and a minimal fix sketch + test idea.\n\nAlso include `perf` items only if they can realistically affect outcomes (e.g., O(N^2) under high message rates)."
+        }
+      ]
+    },
+    {
+      "job_id": "crit_02_l3_exchange_fill_semantics",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 2/6.\n\nCommon constraints: read-only, no cargo/tests, no web, Rust only in hftbacktest/.\nOutput: final response must be harness Run Report JSON; embed details inside `summary` between BEGIN_ISSUES_JSON/END_ISSUES_JSON.\n\nScope (strict): `hftbacktest/src/backtest/proc/l3_nopartialfillexchange.rs` (+ any required trait glue in `hftbacktest/src/backtest/proc/mod.rs`).\n\nHunt for CRITICAL issues only:\n- incorrect handling of MBO events (add/modify/cancel/fill/clear), mismatched depth mutation vs fill event, wrong maker/taker attribution, violations of Processor contract (wait_resp_order_id), ordering mismatches that can create lookahead or optimistic fills.\n\nRequired: file:line evidence, repro event sequences, minimal fix + regression tests."
+        }
+      ]
+    },
+    {
+      "job_id": "crit_03_l3_local_modify_cancel_state",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 3/6.\n\nCommon constraints: read-only, no cargo/tests, no web, Rust only in hftbacktest/.\nOutput: final response must be harness Run Report JSON; embed details inside `summary` between BEGIN_ISSUES_JSON/END_ISSUES_JSON.\n\nScope (strict): `hftbacktest/src/backtest/proc/l3_local.rs` and `hftbacktest/src/backtest/state.rs`.\n\nHunt for CRITICAL issues only:\n- local/exchange state divergence, modify/cancel semantics (pre-ack mutation bugs), incorrect rejection handling, wrong tick rounding, position/balance/fee drift, any path leading to double-counting or losing fills.\n\nRequired: file:line evidence, repro scenarios, minimal fix + regression tests."
+        }
+      ]
+    },
+    {
+      "job_id": "crit_04_l3_market_depth_invariants",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 4/6.\n\nCommon constraints: read-only, no cargo/tests, no web, Rust only in hftbacktest/.\nOutput: final response must be harness Run Report JSON; embed details inside `summary` between BEGIN_ISSUES_JSON/END_ISSUES_JSON.\n\nScope (strict): L3 depth correctness only. Files: `hftbacktest/src/depth/mod.rs`, `hftbacktest/src/depth/hashmapmarketdepth.rs`, `hftbacktest/src/depth/roivectormarketdepth.rs`, `hftbacktest/src/depth/btreemarketdepth.rs`.\n\nHunt for CRITICAL issues only:\n- best bid/ask correctness under L3 adds/deletes/fills, snapshot interactions that can desync L3 order state, ROI edge cases that can make best stale, and any bug that can cause fills at sentinel/invalid prices.\n\nRequired: file:line evidence, repro scenarios, minimal fix + regression tests."
+        }
+      ]
+    },
+    {
+      "job_id": "crit_05_timestamp_ordering_no_lookahead",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 5/6.\n\nCommon constraints: read-only, no cargo/tests, no web, Rust only in hftbacktest/.\nOutput: final response must be harness Run Report JSON; embed details inside `summary` between BEGIN_ISSUES_JSON/END_ISSUES_JSON.\n\nScope (strict): event scheduling + within-timestamp ordering. Files: `hftbacktest/src/backtest/mod.rs`, `hftbacktest/src/backtest/evs.rs`, `hftbacktest/src/backtest/data/mod.rs`, `hftbacktest/src/backtest/data/reader.rs`, and any timestamp ordering in `hftbacktest/src/backtest/order.rs`.\n\nHunt for CRITICAL issues only:\n- lookahead via same-timestamp ordering, reliance on file order for same timestamps, missing validation of local_ts/exch_ts monotonicity that can reorder causality, and any ordering that systematically inflates fills.\n\nRequired: file:line evidence, repro scenarios, minimal fix + regression tests."
+        }
+      ]
+    },
+    {
+      "job_id": "crit_06_performance_pathologies_l3",
+      "working_directory": "hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are Agent 6/6.\n\nCommon constraints: read-only, no cargo/tests, no web, Rust only in hftbacktest/.\nOutput: final response must be harness Run Report JSON; embed details inside `summary` between BEGIN_ISSUES_JSON/END_ISSUES_JSON.\n\nScope (strict): performance-critical code paths that can affect realism/outcomes in L3 mode (not generic micro-optimizations). You may inspect any Rust files under `hftbacktest/src/backtest/` and `hftbacktest/src/depth/` but focus on the L3 path.\n\nHunt for CRITICAL perf issues only:\n- algorithmic blowups (e.g., per-event O(levels) scans, heavy allocations) that can force unrealistic time compression or dropped events, and any perf-driven nondeterminism risks.\n- If you find a correctness bug while doing perf review, include it (still must be critical).\n\nRequired: file:line evidence; describe worst-case complexity with an example feed rate; minimal fix sketches and benchmark/test ideas."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+  "batch_goal_summary": "Gap-fill brainstorming batch for AAAHFT ES (CME) TBBO scalping ideation. The prior brainstorm round produced 10 complete theme packs under `research/alpha_ideation/round1_20260121T100354Z/` but the `09_vol_regime_spread_depth` and `10_microstructure_misc` themes did not get written because their Codex attempts became orphaned (network/stream disconnect). Objective: regenerate ONLY the missing two theme artifacts (one markdown note + one YAML hypothesis list per theme), with the same rigor as the completed themes. Binding constraints: no-lookahead using `ts_recv` as the visibility clock, order updates effective at `signal_ts + 1ms`, costs $0.58 per side ($1.16 round trip) for maker and taker, and TBBO-only data (top-of-book + trade prints; no true queue position). Agents must NOT use or read the literature Alpha Bank (`research/alpha_bank/`) or literature notes (`research/literature/`) to keep this brainstorm diverse. Deliverables must be written to disk in the exact target filenames, contain 18 specific hypotheses each, include explicit parameter sweeps and failure-mode segmentation, and keep cost-feasibility reasoning front and center.",
+  "concurrency": 2,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "workspace-write",
+    "skip_git_repo_check": true,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 14400 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "brain_fill_09_vol_regime_spread_depth",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: volatility regime, spread widening, depth thinning — and adaptive control.\n\nDo NOT read anything under research/alpha_bank/ or research/literature/.\n\nIMPORTANT reliability instruction:\n- Write the target markdown + YAML files EARLY (after you have 6 hypotheses), then iterate to reach 18.\n\nWrite artifacts (exact paths):\n- research/alpha_ideation/round1_20260121T100354Z/09_vol_regime_spread_depth.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_09_vol_regime_spread_depth.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    },
+    {
+      "job_id": "brain_fill_10_microstructure_misc",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/DIVERSE_ALPHA_BRAINSTORM_V1.md",
+          "append_prompt": "Theme: miscellaneous microstructure hypotheses (unusual, creative, but still testable with TBBO-only).\n\nDo NOT read anything under research/alpha_bank/ or research/literature/.\n\nIMPORTANT reliability instruction:\n- Write the target markdown + YAML files EARLY (after you have 6 hypotheses), then iterate to reach 18.\n\nWrite artifacts (exact paths):\n- research/alpha_ideation/round1_20260121T100354Z/10_microstructure_misc.md\n- research/alpha_ideation/round1_20260121T100354Z/raw_hypotheses_10_microstructure_misc.yaml\n\nAlso read: CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md."
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,64 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+  "batch_goal_summary": "Batch 1/2: Apply minimal, test-backed fixes to the highest-impact, REACHABLE_DEFAULT correctness bugs in the CME Globex + Databento MBO (GLBX.MDP3/mbo) L3 backtest stack. This is not a refactor and not a generic audit. The objective is to eliminate specific failures that can distort fills/PNL or corrupt strategy state under normal usage, while keeping diffs extremely small and behaviorally targeted. Required deliverables per job: (1) add a deterministic regression test that fails on current code (red) and passes after the fix (green); (2) implement the smallest safe patch; (3) run only the narrowest relevant test command(s) to confirm green; (4) report the invariant being enforced and why it is reachable under our default pipeline/config (or explicitly tag as a guardrail if not). Scope for Batch 1 is limited to: Python conversion/validation UB/OOB in `py-hftbacktest/hftbacktest/data/validation.py` (Numba), plus three Rust L3 implementation bugs (not model realism upgrades): modify/replace that crosses the book must execute (ack_modify parity with ack_new), local reject messages must not resurrect terminal order state, and L3 FIFO crossing fill ordering must be deterministic and price-priority-correct across ticks (no HashSet/HashMap iteration ordering). Hard constraints: do not touch examples/ notebooks; do not run web search; do not commit; do not do formatting churn; do not introduce new dependencies; keep changes localized to the smallest functions. Run Cargo tests with a job-specific `CARGO_TARGET_DIR` under `.ph_target/` to avoid target directory interference. After this batch, we will pause for human review before Batch 2 (opt-in CME realism mode: taker sweep/cap + MBO partial fill accounting).",
+  "concurrency": 1,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "workspace-write",
+    "skip_git_repo_check": false,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 10800 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "b1_fix_01_numba_correct_event_order_oob",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt": "Fix job 1/4 (Batch 1): Python pipeline UB/OOB in correct_event_order (Numba)\n\nContext (binding): This is CME Globex + Databento MBO L3 backtesting. We care about REACHABLE_DEFAULT bugs that can silently corrupt event ordering or crash/UB during conversion/validation.\n\nTarget:\n- `py-hftbacktest/hftbacktest/data/validation.py` (Numba)\n\nConfirmed issue:\n- `correct_event_order(...)` can index past the end of `data` before bounds checks, which becomes IndexError under `NUMBA_BOUNDSCHECK=1` and is UB-risk otherwise.\n\nRequirements (STRICT):\n- Minimal patch only: do not refactor; only rearrange bounds checks / loop structure to prevent any out-of-bounds access.\n- Add a deterministic regression test that FAILS on current code and PASSES after fix.\n  - The failure must be deterministic. Use a subprocess-based unittest that sets `NUMBA_BOUNDSCHECK=1` before importing/compiling the function.\n  - The test must not depend on any large fixtures or DBN parsing.\n  - Construct a minimal synthetic numpy structured array that triggers the previous OOB path.\n- After fix, the test should also assert a basic ordering invariant using `validate_event_order(...)` (or equivalent): that the corrected output is valid.\n\nRun commands:\n- Show red: run ONLY the new test.\n- Apply fix.\n- Show green: re-run ONLY the new test.\n\nOutput: Run Report JSON only (schema_version=1.0.0).\n- In `summary`, include: what was broken, the exact invariant asserted by the test, the exact command(s) you ran, and why this is REACHABLE_DEFAULT.\n- End summary with 1–3 grep-friendly lines: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA."
+        }
+      ]
+    },
+    {
+      "job_id": "b1_fix_02_l3_modify_cross_exec_on_replace",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "Fix job 2/4 (Batch 1): L3 modify/replace that crosses the book must execute\n\nContext (binding): CME Globex + Databento MBO L3 backtesting. This is an implementation bug (internal contradiction), not a model realism upgrade.\n\nTargets:\n- `hftbacktest/src/backtest/proc/l3_nopartialfillexchange.rs`\n\nProblem statement:\n- `ack_new` applies a marketability check (crossing orders fill or GTX-expire), but `ack_modify` does not re-check marketability after applying the modify. As a result, an order can be modified to cross and remain incorrectly resting (missed fills / wrong state).\n\nRequirements (STRICT):\n- Minimal patch only: do not refactor; avoid large helper extraction unless it reduces duplication with minimal diff.\n- Add a deterministic regression test that FAILS before and PASSES after.\n  - The test should create a minimal exchange processor state with a known best bid/ask, submit a passive order, then modify it to cross, and assert the result is a taker fill (or GTX-expire if using GTX).\n  - Keep the test local: add a `#[cfg(test)] mod tests` at the bottom of `l3_nopartialfillexchange.rs` (there are currently no tests in this file).\n- Run Cargo with job-specific target dir:\n  - `CARGO_TARGET_DIR=.ph_target/b1_fix_02 cargo test -p hftbacktest --lib <test-filter>`\n\nOutput: Run Report JSON only (schema_version=1.0.0).\n- Summary must include: file/func touched, what invariant is enforced (\"no crossed resting order after replace\"), test command run, and why reachable under default usage.\n- End summary with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA."
+        }
+      ]
+    },
+    {
+      "job_id": "b1_fix_03_l3_local_reject_no_terminal_resurrect",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "Fix job 3/4 (Batch 1): L3 local reject must not resurrect terminal order state\n\nContext (binding): CME Globex + Databento MBO L3 backtesting. We care about state integrity under realistic race windows (cancel/modify sent after a fill occurred but before the fill is observed locally).\n\nTargets:\n- `hftbacktest/src/backtest/proc/l3_local.rs`\n- (Only if strictly necessary) the smallest possible supporting change in `hftbacktest/src/types.rs` or related code.\n\nProblem statement:\n- A late cancel/modify reject (`OrderNotFound` sets `req=Rejected`) can overwrite a terminal local order status (e.g., Filled) back to New via `Order::update` + correlation logic, producing a zombie \"working\" order.\n\nRequirements (STRICT):\n- Minimal patch only: do not refactor.\n- Add a deterministic regression test that FAILS before and PASSES after.\n  - The test must demonstrate the race: fill response processed, then reject processed later, and assert the order remains terminal (or removed), never resurrected to working.\n  - Prefer a `#[cfg(test)] mod tests` at the bottom of `l3_local.rs`.\n  - The test must assert a monotonic state invariant: terminal states do not regress.\n- Run Cargo with job-specific target dir:\n  - `CARGO_TARGET_DIR=.ph_target/b1_fix_03 cargo test -p hftbacktest --lib <test-filter>`\n\nOutput: Run Report JSON only (schema_version=1.0.0).\n- Summary must include: the exact invariant, the minimal patch strategy (e.g., ignore reject updates once terminal), and the command(s) run.\n- End summary with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA."
+        }
+      ]
+    },
+    {
+      "job_id": "b1_fix_04_l3_queue_crossing_fill_determinism",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "Fix job 4/4 (Batch 1): L3 FIFO crossing fills must be deterministic and price-priority-correct across ticks\n\nContext (binding): CME Globex + Databento MBO L3 backtesting. With many tied local timestamps, stable deterministic fill ordering is required for reproducible research.\n\nTargets:\n- `hftbacktest/src/backtest/models/queue.rs`\n\nProblem statement:\n- Crossing fill logic can iterate over `HashSet`/`HashMap` tick collections, producing nondeterministic cross-tick fill ordering. Additionally, bid tick iteration can run in ascending order (worse→better), violating price priority across ticks.\n\nRequirements (STRICT):\n- Minimal patch only: do not refactor data structures globally. Replace unordered iteration with a deterministic ordering at the smallest possible scope (e.g., collect ticks into Vec and sort, or use BTreeSet).\n- Enforce price priority across ticks:\n  - bids: higher ticks first (descending)\n  - asks: lower ticks first (ascending)\n- Add a deterministic regression test that FAILS before and PASSES after.\n  - There is already a `#[cfg(test)]` module in this file; add the smallest new test there.\n  - Test should set up two backtest orders at different ticks that become fillable in one crossing update, and assert the returned fill ordering matches price priority.\n- Run Cargo with job-specific target dir:\n  - `CARGO_TARGET_DIR=.ph_target/b1_fix_04 cargo test -p hftbacktest --lib <test-filter>`\n\nOutput: Run Report JSON only (schema_version=1.0.0).\n- Summary must include: what ordering was nondeterministic/wrong, what deterministic rule is enforced now, and the test command(s) run.\n- End summary with PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA."
+        }
+      ]
+    }
+  ]
+}
+

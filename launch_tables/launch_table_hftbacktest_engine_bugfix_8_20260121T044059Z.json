@@ -1,0 +1,109 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+  "batch_goal_summary": "This batch implements test-first bugfixes from the read-only engine review batch `batch_20260121T040233Z_e9fcc902`, piped into the concrete bug report `/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/BUG_REPORT_ENGINE_REVIEW_6_20260121T044059Z.md`. Objective: fix the highest-impact correctness/safety/performance issues in the research/backtest engine and prove each fix via deterministic regression tests (workflow: write regression test first, show it fails pre-fix, implement minimal fix, show it passes post-fix). Each agent must first verify that the assigned item is a real bug (not a design choice), rate severity (Critical/High/Medium/Low), and explain real-world implications for backtest validity (look-ahead, PnL/position correctness, systematic optimism/pessimism, UB risk). Execution constraints: run in isolated git worktrees, but make Rust compilation efficient by sharing the canonical build cache at `/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target` across all jobs; do not copy `target/` into worktrees. To keep sandboxing while allowing shared target writes, the harness grants that target directory as an additional writable path and each agent must run Cargo with `CARGO_TARGET_DIR` pointing at the canonical target. Keep diffs surgical; avoid touching excluded directories (examples/, live/, connector/, collector/, py-hftbacktest/) unless absolutely required by the assigned fix; minimize overlap with other jobs.",
+  "concurrency": 8,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "workspace-write",
+    "add_dirs": ["/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target"],
+    "skip_git_repo_check": false,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 10800 },
+  "workspace_policy": { "mode": "isolated" },
+  "jobs": [
+    {
+      "job_id": "fix_01_alignedarray_soundness",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 10800,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator (another GPT‑5.2 instance).\nYou have a narrow scope. Do not expand it; do not “improve unrelated things”.\n\nHard workflow requirement (do not skip):\n1) Write the regression test first.\n2) Run it and show it fails (pre-fix).\n3) Implement the minimal fix.\n4) Run it again and show it passes (post-fix).\n\nNo secrets / logs: if output is large, write it to `.ph_artifacts/fix_01_alignedarray_soundness/regression_{fail,pass}.txt` and reference those paths.\nEnd with 1–3 lines starting with exactly: PROMPT_AMBIGUITY / MISSING_INPUT / PROMPT_DELTA.\n\nJob: Fix 01/08 — `AlignedArray` soundness + overflow-safe allocation\n\nInputs:\n- Bug report: `BUG_REPORT_ENGINE_REVIEW_6_20260121T044059Z.md` (AlignedArray section)\n\nScope (strict):\n- `hftbacktest/src/utils/aligned.rs`\n- Only touch other files if required for tests.\n\nTarget issues to verify:\n- `AlignedArray::new` allocates uninitialized memory but safe APIs allow reads (UB risk).\n- `len * size_of::<T>()` arithmetic is unchecked.\n- `len==0` panics; callers may legitimately want empty buffers.\n\nImplementation constraints:\n- Keep API changes minimal and backwards-compatible if possible.\n- Prefer a safe-by-construction design: either zero-initialize (`alloc_zeroed`) OR store `MaybeUninit<T>` and expose initialized views only after writing.\n- Use checked size math and `Layout::from_size_align` (not *_unchecked) where possible.\n\nTests:\n- Add regression tests that would have been UB/panic before and are now safe.\n- If Miri is feasible, add a Miri-oriented test (but do not require Miri to run in CI).\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n- Prefer targeted runs: `CARGO_TARGET_DIR=... cargo test -p hftbacktest --lib -- alignedarray`.\n\nOutput:\n- Bug? severity? implications?\n- Fail→pass evidence.\n- Files changed + test names added."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_02_data_rc_indexmut_soundness",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 10800,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; test-first regression proof required; end with PROMPT_* lines.\n\nJob: Fix 02/08 — `Data`/`DataPtr` soundness (`Rc` aliasing + null fat pointer)\n\nInputs:\n- Bug report: `BUG_REPORT_ENGINE_REVIEW_6_20260121T044059Z.md` (Data/DataPtr section)\n\nScope (strict):\n- `hftbacktest/src/backtest/data/mod.rs`\n- Only touch other files if required for tests or for minimal compile fixes.\n\nTarget issues to verify:\n- `Data<D>` is `Clone` over `Rc<DataPtr>` but exposes safe `IndexMut` returning `&mut D` (aliasing UB).\n- `DataPtr::default()` uses a null slice fat pointer and `Index` derefs it.\n- Overflow-prone index math in `Data` indexing (`offset + index * size`, then `i + size`) should not be able to wrap.\n\nPreferred fix direction (pick the minimal correct one):\n- Remove safe `IndexMut` on `Data<D>` OR implement copy-on-write/uniqueness before returning `&mut D`.\n- Make `DataPtr::default()` use a non-null dangling slice pointer of length 0.\n- Make indexing overflow-safe (e.g., check `index < len_elems` rather than byte arithmetic).\n\nTests:\n- Add tests that demonstrate the pre-fix failure mode (panic/incorrect behavior/unsafe aliasing pattern) in a safe way.\n- Add a test that `Data::empty()` is safe to index-check/panic correctly (no UB path).\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput:\n- Severity + implications.\n- Fail→pass evidence (or artifact paths).\n- Files changed + test names."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_03_reader_thread_send_and_hang",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 10800,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; test-first regression proof required; end with PROMPT_* lines.\n\nJob: Fix 03/08 — Reader thread safety + loader panic should not hang `next_data`\n\nInputs:\n- Bug report: `BUG_REPORT_ENGINE_REVIEW_6_20260121T044059Z.md` (Reader/DataSend section)\n\nScope (strict):\n- `hftbacktest/src/backtest/data/reader.rs`\n- Minimize touching other files.\n\nTarget issues to verify:\n- `unsafe impl Send for DataSend<D>` moves `Data<D>` (contains `Rc`) across threads.\n- `Reader::next_data()` can hang indefinitely if a loader thread panics before sending (channel waits forever).\n\nPreferred fix direction:\n- Eliminate cross-thread `Rc` by sending owned bytes/pointer (`DataPtr` or similar) across threads, and wrap in `Rc` only on the receiver thread.\n- Make loader failures deterministic: if a worker panics or channel closes unexpectedly, return an error instead of blocking.\n\nTests:\n- Add a regression test that simulates worker panic (e.g., a test datasource / preprocessor that panics in the loader thread) and assert `next_data()` returns `Err` rather than hanging.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput:\n- Bug? severity? implications.\n- Fail→pass evidence.\n- Files changed + test names."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_04_l2_modify_leaves_qty",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; test-first regression proof required; end with PROMPT_* lines.\n\nJob: Fix 04/08 — L2 modify must reset `leaves_qty` correctly\n\nInputs:\n- Bug report: `BUG_REPORT_ENGINE_REVIEW_6_20260121T044059Z.md` (L2 modify leaves_qty section)\n\nScope (strict):\n- `hftbacktest/src/backtest/proc/local.rs`\n- `hftbacktest/src/backtest/proc/nopartialfillexchange.rs`\n- `hftbacktest/src/backtest/proc/partialfillexchange.rs`\n\nTarget behavior to verify:\n- Modify that routes through cancel+new (price change, RESET_QUEUE_POS, qty increase) must result in `leaves_qty == new qty` on the new resting order and correct subsequent fills.\n\nTest design hint:\n- Construct a tiny synthetic backtest where an order is placed, partially filled (or not), then modified in a way that forces cancel+new; assert final fills/leaves are consistent with the new qty.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n- Prefer targeted: `cargo test -p hftbacktest --lib -- l2_modify_leaves`.\n\nOutput:\n- Severity + implications.\n- Fail→pass evidence.\n- Files changed + tests added."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_05_cancel_ack_preserve_local_timestamp",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; test-first regression proof required; end with PROMPT_* lines.\n\nJob: Fix 05/08 — Cancel ACK must preserve request `local_timestamp` for latency accounting\n\nInputs:\n- Bug report: `BUG_REPORT_ENGINE_REVIEW_6_20260121T044059Z.md` (cancel ACK latency section)\n\nScope (strict):\n- `hftbacktest/src/backtest/proc/local.rs`\n- `hftbacktest/src/backtest/proc/nopartialfillexchange.rs`\n- `hftbacktest/src/backtest/proc/partialfillexchange.rs`\n- L3 equivalents only if the bug reproduces there too.\n\nTarget behavior to verify:\n- When a cancel request is sent with `local_timestamp = t_req`, the received cancel response must still carry `local_timestamp = t_req` (or Local must compute latency using the request timestamp from local state), so `Local.last_order_latency` remains correct.\n\nTest design hint:\n- Set a known request timestamp, run a cancel path, and assert recorded `(req_local_ts, exch_ts, resp_local_ts)` equals expected values.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput:\n- Severity + implications.\n- Fail→pass evidence.\n- Files changed + tests added."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_06_roivector_depth_clamp_oob",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; test-first regression proof required; end with PROMPT_* lines.\n\nJob: Fix 06/08 — `ROIVectorMarketDepth` clamp correctness (no OOB/UB)\n\nInputs:\n- Bug report: `BUG_REPORT_ENGINE_REVIEW_6_20260121T044059Z.md` (ROI vector OOB section)\n\nScope (strict):\n- `hftbacktest/src/depth/roivectormarketdepth.rs`\n\nTarget issues to verify:\n- `depth_below` / `depth_above` must clamp `start`/`end` into ROI safely before converting to `usize` and using `get_unchecked`.\n- Ensure callers cannot set `best_*_tick` outside ROI in a way that makes scans unsafe.\n\nTests:\n- Add a regression test that creates a narrow ROI and drives state such that best ticks drift outside ROI, then calls the recompute path and asserts it does not panic and yields correct INVALID_* results.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput:\n- Severity + implications.\n- Fail→pass evidence.\n- Files changed + tests added."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_07_fused_clear_depth_off_by_one",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; test-first regression proof required; end with PROMPT_* lines.\n\nJob: Fix 07/08 — `FusedHashMapMarketDepth::clear_depth` off-by-one recompute\n\nInputs:\n- Bug report: `BUG_REPORT_ENGINE_REVIEW_6_20260121T044059Z.md` (fused clear_depth section)\n\nScope (strict):\n- `hftbacktest/src/depth/fuse.rs`\n\nTarget behavior to verify:\n- After a clear up to tick `T`, recompute should consider adjacent ticks correctly (no skipping `T-1`/`T+1` where appropriate).\n\nTests:\n- Add a regression test that seeds depth around the boundary and asserts best bid/ask after clear matches expected.\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput:\n- Severity + implications.\n- Fail→pass evidence.\n- Files changed + tests added."
+        }
+      ]
+    },
+    {
+      "job_id": "fix_08_intporderlatency_empty_and_duplicate_ts",
+      "working_directory": "/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 9000,
+          "prompt": "You are one of multiple parallel agents launched by an orchestrator.\nNarrow scope only; test-first regression proof required; end with PROMPT_* lines.\n\nJob: Fix 08/08 — `IntpOrderLatency` empty dataset + duplicate timestamp robustness\n\nInputs:\n- Bug report: `BUG_REPORT_ENGINE_REVIEW_6_20260121T044059Z.md` (IntpOrderLatency section)\n\nScope (strict):\n- `hftbacktest/src/backtest/models/latency.rs`\n\nTarget issues to verify:\n- Empty latency dataset must not panic (`self.data[0]` indexing).\n- Duplicate `req_ts` (or any `x2==x1`) must not cause division-by-zero in interpolation.\n\nPreferred behavior:\n- Return a clear `BacktestError::DataError(InvalidData, ...)` when dataset is empty or malformed.\n\nTests:\n- Add a regression test for empty dataset (build should error, not panic).\n- Add a regression test for duplicate timestamps (build should error OR interpolation should handle it deterministically; pick one and document).\n\nCommands/tests:\n- Use shared build cache: `CARGO_TARGET_DIR=\"/Users/simongu/AAAHFT-Futures-Alpha-seek/hftbacktest/target\"`.\n\nOutput:\n- Severity + implications.\n- Fail→pass evidence.\n- Files changed + tests added."
+        }
+      ]
+    }
+  ]
+}
+

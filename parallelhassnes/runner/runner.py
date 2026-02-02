@@ -495,6 +495,14 @@ class Runner:
             by[run_id] = run_ent
 
         self._store.update_current_atomic(batch_id, job_id, apply)
+        # Keep filesystem scoreboards reasonably fresh even when the harness tick loop
+        # is blocked inside `run_until_idle()` for long-running steps.
+        #
+        # This is best-effort monitoring only: never let scoreboard issues block execution.
+        try:
+            self._store.write_batch_scoreboard(batch_id)
+        except Exception:
+            pass
 
     def _update_current_thread_id(self, batch_id: str, job_id: str, step_id: str, run_id: str, thread_id: str) -> None:
         def apply(cur: dict[str, Any]) -> None:
@@ -548,6 +556,11 @@ class Runner:
                     s["latest_successful"] = latest
 
         self._store.update_current_atomic(batch_id, job_id, apply)
+        # Best-effort monitoring: refresh the batch scoreboard when a step reaches terminal state.
+        try:
+            self._store.write_batch_scoreboard(batch_id)
+        except Exception:
+            pass
 
     def _prepare_resume_base(
         self,
@@ -715,6 +728,7 @@ class Runner:
         skip_git = bool(exec_policy.get("skip_git_repo_check", False))
         web_search = bool(exec_policy.get("web_search_enabled", False))
         sandbox = exec_policy.get("sandbox")
+        add_dirs = exec_policy.get("add_dirs") or exec_policy.get("add_dir")
         approval = exec_policy.get("approval_policy")
         reasoning_effort = exec_policy.get("model_reasoning_effort")
 
@@ -737,6 +751,15 @@ class Runner:
             base.extend(["--config", f"model_reasoning_effort={json.dumps(reasoning_effort.strip())}"])
         if isinstance(sandbox, str) and sandbox.strip():
             base.extend(["--sandbox", sandbox.strip()])
+        # Allow additional writable dirs alongside the primary workspace when sandboxed.
+        # This is useful for sharing a Rust `target/` build cache across isolated git worktrees without copying it.
+        if add_dirs:
+            if isinstance(add_dirs, str) and add_dirs.strip():
+                base.extend(["--add-dir", add_dirs.strip()])
+            elif isinstance(add_dirs, list):
+                for d in add_dirs:
+                    if isinstance(d, str) and d.strip():
+                        base.extend(["--add-dir", d.strip()])
         if approval_s:
             if supports_ask_for_approval:
                 base.extend(["--ask-for-approval", approval_s])

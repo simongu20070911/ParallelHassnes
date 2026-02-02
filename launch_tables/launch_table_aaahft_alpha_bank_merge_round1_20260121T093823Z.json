@@ -1,0 +1,55 @@
+{
+  "working_root": "/Users/simongu/AAAHFT-Futures-Alpha-seek",
+  "batch_goal_summary": "Alpha Bank integration pass for AAAHFT ES (CME) TBBO research. This batch assumes prior literature agents have already produced `research/alpha_bank/raw_hypotheses_*.yaml` and supporting notes under `research/literature/`. Goal: consolidate these raw hypotheses into a single canonical, auditable Alpha Bank: a machine-readable `research/alpha_bank/alpha_bank.yaml` and a human index `research/alpha_bank/ALPHA_BANK.md`. The merge must be conservative (avoid over-merging), preserve provenance (source ids + source files), and enforce binding constraints: no-lookahead (use `ts_recv` as the visibility clock), 1ms one-way latency from signal to CME order update effective time, and $0.58/side fees ($1.16 round trip) for both maker and taker. Because our research data is TBBO-only, any hypothesis that relies on full depth, true queue position, hidden liquidity, or otherwise unobservable states must be labeled as `infeasible` or `proxy` with explicit caveats. The canonical bank must add priority/triage fields (priority 1–5, expected trade frequency, feasibility) and include a concrete test plan per hypothesis: parameter sweep planes (for heatmaps/plateaus), failure-mode segmentation slices (time-of-day, volatility regime, spread widening, depth thinning), and trace-style diagnostics for best/worst cases. This batch also runs an adversarial audit to surface lookahead traps, execution optimism, and sweep multiplicity risks, then proposes the next receding-horizon portfolio (70% exploitation, 20% exploration, 10% replication/audit) optimized for high trades/day while keeping statistical honesty. All deliverables must be written to disk as durable artifacts; do not store full-paper plaintext or large excerpts.",
+  "concurrency": 3,
+  "execution_policy": {
+    "approval_policy": "never",
+    "model_reasoning_effort": "xhigh",
+    "sandbox": "workspace-write",
+    "skip_git_repo_check": true,
+    "web_search_enabled": false,
+    "capture_events_jsonl": true,
+    "capture_codex_thread_id": true
+  },
+  "retries": { "max_attempts": 1 },
+  "timeouts": { "step_timeout_seconds": 14400 },
+  "workspace_policy": { "mode": "shared" },
+  "jobs": [
+    {
+      "job_id": "alpha_merge_01_merge_dedupe",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/ALPHA_BANK_MERGE_V1.md",
+          "append_prompt": "If any expected `research/alpha_bank/raw_hypotheses_*.yaml` files are missing, wait (poll) up to 2 hours for all 8 raw files to appear, then produce the canonical alpha bank artifacts. Also read CURRENT_GOAL_20260121T070145Z.md and DATA_AVAILABILITY_CONTRACT.md for constraints."
+        }
+      ]
+    },
+    {
+      "job_id": "alpha_merge_02_audit",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/ALPHA_BANK_AUDIT_V1.md",
+          "append_prompt": "If `research/alpha_bank/alpha_bank.yaml` is missing, wait (poll) up to 30 minutes for it to appear, then audit it."
+        }
+      ]
+    },
+    {
+      "job_id": "alpha_merge_03_next_portfolio",
+      "working_directory": ".",
+      "steps": [
+        {
+          "step_id": "run",
+          "timeout_seconds": 7200,
+          "prompt_ref": "research/_inputs/ALPHA_BANK_PORTFOLIO_V1.md",
+          "append_prompt": "If `research/alpha_bank/alpha_bank.yaml` is missing, wait (poll) up to 30 minutes for it to appear, then propose the next 70/20/10 portfolio."
+        }
+      ]
+    }
+  ]
+}
